@@ -66,7 +66,8 @@ export function CrosswordGame({ questions, onSubmit, submitting, eventId }) {
   }
 
   const handleSubmit = () => {
-    onSubmit(answers)
+    const duration = 1800 - timeRemaining
+    onSubmit(answers, duration)
   }
 
   return (

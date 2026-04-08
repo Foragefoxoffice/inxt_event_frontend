@@ -16,26 +16,51 @@ export default function ScreenPage() {
     return () => clearInterval(timer)
   }, [])
 
+  const refreshData = async () => {
+    try {
+      const active = await api.getActiveGames()
+      const stats = await api.getStats(active.eventId)
+      setStatsData(stats)
+
+      // Load Fresh Leaderboards
+      const lbs = {}
+      for (const game of active.games) {
+        const lb = await api.getLeaderboard(game.gameId)
+        lbs[game.gameId] = lb
+      }
+      setLeaderboards(lbs)
+      return active
+    } catch (err) {
+      console.error('Refresh failed:', err.message)
+      throw err
+    }
+  }
+
   useEffect(() => {
     async function init() {
       try {
-        const active = await api.getActiveGames()
-        const stats = await api.getStats(active.eventId)
-        setStatsData(stats)
-
-        // Load initial leaderboards
-        for (const game of active.games) {
-          api.getLeaderboard(game.gameId).then(lb => {
-            setLeaderboards(prev => ({ ...prev, [game.gameId]: lb }))
-          })
-        }
+        const active = await refreshData()
 
         // Socket (Prioritize dedicated socket URL if provided, otherwise fallback to API URL)
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000')
+        const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+        console.log('[SOCKET] Connecting to:', socketUrl)
+        
+        const socket = io(socketUrl, {
+          transports: ['websocket', 'polling'],
+          reconnection: true
+        })
         socketRef.current = socket
-        socket.on('connect', () => socket.emit('join:event', String(active.eventId)))
+
+        const joinRoom = () => {
+          console.log('[SOCKET] Joining event room:', active.eventId)
+          socket.emit('join:event', String(active.eventId))
+        }
+
+        if (socket.connected) joinRoom()
+        socket.on('connect', joinRoom)
 
         socket.on('stats:update', ({ gameId, stats: updatedStats }) => {
+          console.log('[SOCKET] Stats received for:', gameId)
           setStatsData(prev => {
             if (!prev) return prev
             return {
@@ -56,6 +81,7 @@ export default function ScreenPage() {
         })
 
         socket.on('leaderboard:update', ({ gameId, top5 }) => {
+          console.log('[SOCKET] Leaderboard update for:', gameId)
           setLeaderboards(prev => ({
             ...prev,
             [gameId]: { entries: top5 }
@@ -66,7 +92,10 @@ export default function ScreenPage() {
           setStatsData(prev => prev ? { ...prev, totalPlayers: (prev.totalPlayers || 0) + 1 } : prev)
         })
 
-        socket.on('crossword:winner', setWinner)
+        socket.on('crossword:winner', (data) => {
+          console.log('[SOCKET] Crossword winner detected!')
+          setWinner(data)
+        })
       } catch (err) {
         console.error('Screen init failed:', err.message)
       }
@@ -127,7 +156,10 @@ export default function ScreenPage() {
             <div className="w-2 h-2 rounded-full bg-[#ffff] animate-pulse" />
             <span className="text-[10px] font-black text-[#ffff] tracking-widest uppercase">LIVE</span>
           </div>
-          <button className="bg-[#ffff] text-[#003B6E] px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg shadow-[#00ADEF]/20 transition-transform active:scale-95">
+          <button 
+            onClick={refreshData}
+            className="bg-[#ffff] text-[#003B6E] px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg shadow-[#00ADEF]/20 transition-transform active:scale-95 hover:bg-[#F0F9FF]"
+          >
             Update Scores
           </button>
         </div>
@@ -162,10 +194,10 @@ export default function ScreenPage() {
             <span className="text-[#7BC242] font-black text-xs uppercase tracking-tight">{mythGame?.aiMatchPercent || 0}%</span>
           </div>
           {/* Repeating for seamless marquee */}
-          <div className="flex items-center gap-10 ml-10">
-            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Top Scenario:</span><span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span></div>
-            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword winners:</span><span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">3</span></div>
-          </div>
+            <div className="flex items-center gap-10 ml-10">
+              <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Top Scenario:</span><span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span></div>
+              <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword winners:</span><span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{lbCrossword.length}</span></div>
+            </div>
         </div>
       </div>
 
@@ -259,7 +291,12 @@ export default function ScreenPage() {
                 {lbCrossword.slice(0, 3).map((entry, i) => (
                   <div key={i} className="p-6 flex items-center justify-between group hover:bg-[#F8FBFF] transition-colors">
                     <div className="flex items-center gap-6">
-                      <span className="text-xs font-black text-[#00ADEF] tracking-widest tabular-nums">{10 + i}:00</span>
+                      <span className="text-xs font-black text-[#00ADEF] tracking-widest tabular-nums">
+                        {entry.duration ? 
+                          `${Math.floor(entry.duration / 60)}:${(entry.duration % 60).toString().padStart(2, '0')}` : 
+                          '--:--'
+                        }
+                      </span>
                       <span className="text-xl font-black text-[#003B6E] group-hover:text-[#00ADEF] transition-colors">{entry.name}</span>
                     </div>
                     <div className="flex items-center gap-4">

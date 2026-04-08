@@ -50,11 +50,11 @@ export default function GamePage() {
     }
   }
 
-  async function handleSubmit(answers) {
+  async function handleSubmit(answers, duration = null) {
     setSubmitting(true)
     setError(null)
     try {
-      const data = await api.submitSession({ playerId, gameId, answers })
+      const data = await api.submitSession({ playerId, gameId, answers, duration })
       router.push(`/play/games/${gameId}/result?session=${data.sessionId}`)
     } catch (err) {
       setError(err.message)
