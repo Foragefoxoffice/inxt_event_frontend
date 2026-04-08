@@ -135,9 +135,7 @@ export default function ScreenPage() {
 
       {/* 2. TICKER BAR */}
       <div className="bg-[#FFFFFF] border-b border-[#00ADEF]/10 py-3 px-8 flex items-center overflow-hidden whitespace-nowrap shadow-sm z-[5]">
-        <div className="flex items-center gap-3 shrink-0 mr-12 bg-[#F0F9FF] px-4 py-1.5 rounded-full border border-[#00ADEF]/20 shadow-sm">
-          <span className="text-[#00ADEF] font-black text-[10px] tracking-widest uppercase">LIVE TODAY:</span>
-        </div>
+       
         <div className="flex items-center gap-10 animate-marquee">
           <div className="flex items-center gap-2">
             <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Top Scenario:</span>
