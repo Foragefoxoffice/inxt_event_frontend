@@ -134,7 +134,7 @@ export default function ScreenPage() {
       </header>
 
       {/* 2. TICKER BAR */}
-      <div className="bg-[#FFFFFF] border-b border-[#00ADEF]/10 py-3 px-8 flex items-center overflow-hidden whitespace-nowrap shadow-sm z-[5]">
+      <div className="bg-[#FFFFFF] border-b border-[#00ADEF]/10 py-3 px-8 flex items-center overflow-hidden whitespace-nowrap shadow-sm z-5">
        
         <div className="flex items-center gap-10 animate-marquee">
           <div className="flex items-center gap-2">
