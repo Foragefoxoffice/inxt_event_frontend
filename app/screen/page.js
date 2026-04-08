@@ -122,9 +122,23 @@ export default function ScreenPage() {
   const crosswordGame = activeGames.find(g => g.gameType === 'CROSSWORD')
   const interviewGame = activeGames.find(g => g.gameType === 'INTERVIEW')
 
-  const lbAgency = leaderboards[agencyGame?.gameId]?.entries || []
   const lbCrossword = leaderboards[crosswordGame?.gameId]?.entries || []
   const lbMyth = leaderboards[mythGame?.gameId]?.entries || []
+  const lbAgency = leaderboards[agencyGame?.gameId]?.entries || []
+
+  const getCountdown = () => {
+    const minutes = currentTime.getMinutes()
+    const seconds = currentTime.getSeconds()
+    const totalSecondsInInterval = 30 * 60
+    const currentSeconds = (minutes % 30) * 60 + seconds
+    const remainingSeconds = totalSecondsInInterval - currentSeconds
+    
+    const displayMins = Math.floor(remainingSeconds / 60)
+    const displaySecs = remainingSeconds % 60
+    return `${String(displayMins).padStart(2, '0')}:${String(displaySecs).padStart(2, '0')}`
+  }
+
+  const topCrosswordPlayer = lbCrossword[0]
 
   const formattedDate = currentTime.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -291,17 +305,31 @@ export default function ScreenPage() {
                 {lbCrossword.slice(0, 3).map((entry, i) => (
                   <div key={i} className="p-6 flex items-center justify-between group hover:bg-[#F8FBFF] transition-colors">
                     <div className="flex items-center gap-6">
-                      <span className="text-xs font-black text-[#00ADEF] tracking-widest tabular-nums">
-                        {entry.duration ? 
-                          `${Math.floor(entry.duration / 60)}:${(entry.duration % 60).toString().padStart(2, '0')}` : 
-                          '--:--'
-                        }
-                      </span>
-                      <span className="text-xl font-black text-[#003B6E] group-hover:text-[#00ADEF] transition-colors">{entry.name}</span>
+                      <div className="text-xl font-black text-[#003B6E]/10 w-6 text-center tabular-nums group-hover:text-[#00ADEF] transition-colors">{i + 1}</div>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-black text-[#003B6E] group-hover:text-[#00ADEF] transition-colors leading-tight">{entry.name}</span>
+                        <span className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest">{entry.company}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest">{entry.company}</span>
-                      <span className="text-[#7BC242] text-xl font-bold">✓</span>
+                    <div className="flex items-center gap-10">
+                      <div className="text-right">
+                        <span className="text-xs font-black text-[#00ADEF] tracking-widest tabular-nums block mb-1">
+                          {entry.duration ? 
+                            `${Math.floor(entry.duration / 60)}:${(entry.duration % 60).toString().padStart(2, '0')}` : 
+                            '--:--'
+                          }
+                        </span>
+                        <div className="text-2xl font-black text-[#003B6E] leading-none tabular-nums">
+                          {entry.score}<span className="text-[10px] opacity-20">%</span>
+                        </div>
+                      </div>
+                      <div className="w-8 flex justify-center">
+                        {entry.score === 100 ? (
+                          <span className="text-[#7BC242] text-2xl font-bold animate-in zoom-in duration-500">✓</span>
+                        ) : (
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#00ADEF]/20" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -315,9 +343,18 @@ export default function ScreenPage() {
             <div className="bg-[#F0F9FF] border border-[#00ADEF]/20 rounded-2xl p-6 flex items-center justify-between shadow-md transition-shadow">
               <div className="flex items-center gap-4">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#00ADEF] animate-pulse" />
-                <div className="text-[#003B6E] font-black text-xs tracking-widest uppercase">Next prize draw in</div>
+                <div className="flex flex-col">
+                  <div className="text-[#003B6E] font-black text-xs tracking-widest uppercase mb-1">Next prize draw in</div>
+                  {topCrosswordPlayer && (
+                    <div className="text-[10px] font-bold text-[#00ADEF] uppercase tracking-wider">
+                      Current Leader: <span className="text-[#003B6E]">{topCrosswordPlayer.name}</span> ({topCrosswordPlayer.company})
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="text-4xl font-black text-[#00ADEF] tabular-nums tracking-tighter">29:48</div>
+              <div className="text-4xl font-black text-[#00ADEF] tabular-nums tracking-tighter">
+                {getCountdown()}
+              </div>
             </div>
           </div>
 
