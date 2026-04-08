@@ -112,7 +112,7 @@ export default function ScreenPage() {
         <div className="flex items-center gap-6">
           {/* Logo */}
           <div className="flex items-center">
-            <img src="/logo.png" alt="iorta TECHNXT" className="h-10 w-auto" />
+            <img src="/logo_shield.png" alt="iorta TECHNXT" className="h-10 w-auto" />
           </div>
         </div>
 
