@@ -113,18 +113,21 @@ export function CrosswordResult({ result, eventId }) {
         </div>
 
         {/* CTAs */}
-        <div className="pt-6 grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+        <div className="pt-6 flex flex-col gap-3 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+          <button
+            onClick={() => {
+              Object.keys(sessionStorage).forEach(k => { if (k.startsWith('player_')) sessionStorage.removeItem(k) })
+              window.location.href = '/play'
+            }}
+            className="py-4 rounded-xl bg-amber-600 font-quiz-label text-sm tracking-widest text-black font-black transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)]"
+          >
+            NEXT PLAYER →
+          </button>
           <button
             onClick={() => window.location.href = '/play'}
             className="py-4 rounded-xl border border-white/10 font-quiz-label text-sm tracking-widest text-white/50 hover:border-white/30 hover:text-white transition-all"
           >
-            PLAY AGAIN
-          </button>
-          <button
-            onClick={() => window.location.href = '/play'}
-            className="py-4 rounded-xl bg-amber-600 font-quiz-label text-sm tracking-widest text-black font-black transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)]"
-          >
-             MORE GAMES →
+            PLAY ANOTHER GAME
           </button>
         </div>
 

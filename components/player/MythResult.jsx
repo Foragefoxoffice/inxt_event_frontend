@@ -80,8 +80,8 @@ export function MythResult({ result, eventId }) {
   const total = result.totalQuestions ?? reveals.length
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0
 
-  const scoreColor = pct >= 80 ? '#06d17f' : pct >= 50 ? '#C4962A' : '#F87171'
-  const scoreLabel = pct >= 80 ? 'AI Thinker' : pct >= 50 ? 'Getting There' : 'Surprised By AI'
+  const scoreColor = pct >= 70 ? '#06d17f' : pct >= 40 ? '#C4962A' : '#F87171'
+  const scoreLabel = pct >= 70 ? 'Matched The AI' : pct >= 40 ? 'Partially Matched' : 'Surprised By AI'
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F0F9FF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -155,30 +155,33 @@ export function MythResult({ result, eventId }) {
         </div>
 
         {/* CTAs */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, animation: 'mythFadeUp 0.4s ease 0.3s both' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, animation: 'mythFadeUp 0.4s ease 0.3s both' }}>
           <button
-            onClick={() => window.location.href = '/play'}
-            style={{
-              padding: '16px', borderRadius: 12,
-              border: '1.5px solid #E2E8F0',
-              background: '#FFFFFF',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-              color: '#003B6E', cursor: 'pointer'
+            onClick={() => {
+              Object.keys(sessionStorage).forEach(k => { if (k.startsWith('player_')) sessionStorage.removeItem(k) })
+              window.location.href = '/play'
             }}
-          >PLAY AGAIN</button>
-          <button
-            onClick={() => window.location.href = '/play'}
             style={{
-              padding: '16px', borderRadius: 12,
+              padding: '18px', borderRadius: 12,
               background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
               border: 'none',
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 12, fontWeight: 900, letterSpacing: '0.15em',
+              fontSize: 14, fontWeight: 900, letterSpacing: '0.15em',
               color: '#FFFFFF', cursor: 'pointer',
               boxShadow: '0 8px 25px rgba(0, 173, 239, 0.3)'
             }}
-          >SEE SALESVERSE LIVE →</button>
+          >NEXT PLAYER →</button>
+          <button
+            onClick={() => window.location.href = '/play'}
+            style={{
+              padding: '14px', borderRadius: 12,
+              border: '1.5px solid #E2E8F0',
+              background: '#FFFFFF',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 12, fontWeight: 700, letterSpacing: '0.12em',
+              color: '#94A3B8', cursor: 'pointer'
+            }}
+          >PLAY ANOTHER GAME</button>
         </div>
 
       </div>

@@ -289,7 +289,10 @@ export function AgencyResult({ result, eventId, sessionId }) {
                           <div className="flex flex-col md:flex-row gap-4 justify-center">
                              <button onClick={() => setActiveTab('actionPlan')} className="px-10 py-5 border rounded-xl font-bold hover:bg-slate-50 transition-colors uppercase text-sm tracking-widest">Back</button>
                              <button onClick={handleSubmitReport} className="bg-[#00ADEF] text-white px-16 py-5 rounded-xl font-black hover:brightness-110 shadow-2xl shadow-[#00ADEF]/20 transition-all uppercase tracking-[0.2em]">Send Me My Report</button>
-                             <button onClick={() => router.push('/play')} className="px-10 py-5 border rounded-xl font-bold hover:bg-slate-50 transition-colors uppercase text-sm tracking-widest">Start Again</button>
+                             <button onClick={() => {
+                               Object.keys(sessionStorage).forEach(k => { if (k.startsWith('player_')) sessionStorage.removeItem(k) })
+                               router.push('/play')
+                             }} className="px-10 py-5 border rounded-xl font-bold hover:bg-slate-50 transition-colors uppercase text-sm tracking-widest">Next Player</button>
                           </div>
                        </div>
                     </div>

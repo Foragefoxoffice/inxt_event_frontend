@@ -184,34 +184,31 @@ export default function ScreenPage() {
        
         <div className="flex items-center gap-10 animate-marquee">
           <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Top Scenario:</span>
-            <span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword winners:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{lbCrossword.length}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Beat the AI:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{lbMyth.length}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Diagnostics done:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{agencyGame?.totalSubmissions || 0}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Players today:</span>
+            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Global Players:</span>
             <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{statsData.totalPlayers}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Agreed with AI:</span>
+            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword Solvers:</span>
+            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{crosswordGame?.totalSubmissions || 0}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">AI Consensus:</span>
             <span className="text-[#7BC242] font-black text-xs uppercase tracking-tight">{mythGame?.aiMatchPercent || 0}%</span>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Interviews Recorded:</span>
+            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{interviewGame?.totalSubmissions || 0}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Current Scenario:</span>
+            <span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span>
+          </div>
+
           {/* Repeating for seamless marquee */}
-            <div className="flex items-center gap-10 ml-10">
-              <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Top Scenario:</span><span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span></div>
-              <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword winners:</span><span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{lbCrossword.length}</span></div>
-            </div>
+          <div className="flex items-center gap-10 ml-10">
+            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Global Players:</span><span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{statsData.totalPlayers}</span></div>
+            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">AI Consensus:</span><span className="text-[#7BC242] font-black text-xs uppercase tracking-tight">{mythGame?.aiMatchPercent || 0}%</span></div>
+          </div>
         </div>
       </div>
 
@@ -269,26 +266,39 @@ export default function ScreenPage() {
             </div>
           </div>
 
-          {/* TOP AGENCY DIAGNOSTICS TODAY */}
+          {/* MARKET SENTIMENT · VOICES OF TAKAFUL AI */}
           <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50 shrink-0">TOP AGENCY DIAGNOSTICS TODAY</h3>
-            <div className="flex-1 space-y-3 overflow-auto pr-2 custom-scrollbar">
-              {lbAgency.slice(0, 5).map((entry, i) => (
-                <div key={i} className="flex items-center gap-5 p-4 rounded-2xl bg-white border border-[#00ADEF]/10 group hover:border-[#00ADEF]/40 transition-all hover:shadow-lg shadow-sm shadow-[#003B6E]/5">
-                  <div className="text-3xl font-black text-[#003B6E]/10 w-8 text-center tabular-nums group-hover:text-[#00ADEF] transition-colors">{i + 1}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-black text-xl text-[#003B6E] leading-tight truncate">{entry.name}</div>
-                    <div className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest truncate">{entry.company} · {entry.role || 'Enterprise / Unit'}</div>
-                    <div className="mt-2 inline-block bg-[#7BC242]/10 text-[#7BC242] text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase">{entry.score >= 90 ? 'High Growth' : entry.score >= 70 ? 'Strong Foundation' : 'Growing Agency'}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-black text-[#003B6E] leading-none tabular-nums">{entry.score}<span className="text-[10px] opacity-20">/100</span></div>
-                    <div className="text-[9px] font-black text-[#7BC242] uppercase tracking-[0.15em] mt-1 tabular-nums italic">{i * 2 + 3} gaps identified</div>
+            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50 shrink-0">MARKET SENTIMENT · VOICES OF TAKAFUL AI</h3>
+            <div className="flex-1 grid grid-cols-1 gap-4 overflow-hidden">
+              {interviewGame?.questionStats?.slice(0, 3).map((q, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-[#00ADEF]/10 p-5 shadow-sm space-y-3">
+                  <p className="text-xs font-bold text-[#003B6E] leading-relaxed">
+                    {q.text || "AI will eventually replace Takaful agents — True or False?"}
+                  </p>
+                  <div className="flex gap-4">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
+                        <span className="text-[#7BC242]">True</span>
+                        <span className="text-[#003B6E]">{Math.round((q.trueCount / (q.trueCount + q.falseCount || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-[#F0F9FF] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#7BC242]" style={{ width: `${(q.trueCount / (q.trueCount + q.falseCount || 1)) * 100}%` }} />
+                      </div>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
+                        <span className="text-[#00ADEF]">False</span>
+                        <span className="text-[#003B6E]">{Math.round((q.falseCount / (q.trueCount + q.falseCount || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-[#F0F9FF] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#00ADEF]" style={{ width: `${(q.falseCount / (q.trueCount + q.falseCount || 1)) * 100}%` }} />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
-              {lbAgency.length === 0 && (
-                <div className="h-full bg-white border border-[#00ADEF]/10 rounded-3xl flex flex-col items-center justify-center text-[#003B6E]/20 font-black tracking-[0.3em] uppercase text-xs p-10 text-center">Waiting for daily insights</div>
+              {(!interviewGame || interviewGame?.totalSubmissions === 0) && (
+                <div className="h-full bg-white border border-[#00ADEF]/10 rounded-3xl flex flex-col items-center justify-center text-[#003B6E]/20 font-black tracking-[0.3em] uppercase text-xs p-10 text-center">Waiting for Market Sentiment</div>
               )}
             </div>
           </div>

@@ -188,21 +188,24 @@ export function QuizResult({ result, eventId }) {
 
         {/* CTAs */}
         <div
-          className="grid grid-cols-2 gap-3 animate-fade-up"
+          className="flex flex-col gap-3 animate-fade-up"
           style={{ animationDelay: `${reveals.length * 0.12 + 0.2}s` }}
         >
+          <button
+            className="py-4 rounded-xl font-quiz-label text-sm tracking-widest transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(196,150,42,0.3)]"
+            style={{ background: '#C4962A', color: '#061122' }}
+            onClick={() => {
+              Object.keys(sessionStorage).forEach(k => { if (k.startsWith('player_')) sessionStorage.removeItem(k) })
+              window.location.href = '/play'
+            }}
+          >
+            NEXT PLAYER →
+          </button>
           <button
             onClick={() => window.location.href = '/play'}
             className="py-4 rounded-xl border border-white/20 font-quiz-label text-sm tracking-widest text-white/80 hover:border-white/40 hover:text-white transition-all"
           >
-            PLAY AGAIN
-          </button>
-          <button
-            className="py-4 rounded-xl font-quiz-label text-sm tracking-widest transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(196,150,42,0.3)]"
-            style={{ background: '#C4962A', color: '#061122' }}
-            onClick={() => window.location.href = '/play'}
-          >
-            EXPLORE SALESVERSE →
+            PLAY ANOTHER GAME
           </button>
         </div>
 

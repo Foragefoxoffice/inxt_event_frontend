@@ -54,69 +54,122 @@ export default function AdminGamesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/admin')} className="text-slate-400 hover:text-white transition text-sm">
-            ← Back
-          </button>
-          <h1 className="text-3xl font-bold">Games</h1>
+    <main className="p-10 animate-in fade-in duration-500">
+      
+      {/* TOP HEADER */}
+      <div className="flex items-center justify-between mb-12">
+        <div>
+          <h1 className="text-4xl font-black text-[#003B6E] tracking-tight uppercase">Game <span className="text-[#00ADEF]">Dashboard</span></h1>
+          <p className="text-sm text-[#003B6E]/40 font-bold uppercase tracking-widest mt-1">Configure and monitor active event challenges</p>
         </div>
-
-        <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-          <h2 className="text-xl font-bold mb-4">Create Game</h2>
-          <form onSubmit={createGame} className="flex gap-3 flex-wrap">
-            <input
-              className="flex-1 min-w-48 bg-slate-700 border border-slate-600 rounded-xl px-4 py-2 outline-none focus:border-blue-500 transition text-white"
-              placeholder="Game title"
-              value={form.title}
-              onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-              required
-            />
-            <select
-              className="bg-slate-700 border border-slate-600 rounded-xl px-4 py-2 outline-none text-white"
-              value={form.type}
-              onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-            >
-              {GAME_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-            <button type="submit" disabled={!eventId} className="bg-green-600 hover:bg-green-500 disabled:opacity-50 px-5 py-2 rounded-xl transition font-semibold">
-              Create
-            </button>
-          </form>
-          {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
-          {!eventId && !loading && <p className="text-amber-400 text-sm mt-2">No active event. Activate one in Admin first.</p>}
-        </div>
-
-        <div className="space-y-3">
-          {loading ? (
-            <p className="text-slate-400">Loading...</p>
-          ) : games.length === 0 ? (
-            <p className="text-slate-500">No games yet.</p>
-          ) : (
-            games.map(game => (
-              <div key={game._id} className="flex items-center justify-between bg-slate-800 border border-slate-700 rounded-xl px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <span className={`text-xs font-bold ${GAME_COLORS[game.type]}`}>{game.type}</span>
-                  <span className="font-semibold text-lg text-white">{game.title}</span>
-                  {!game.isActive && <span className="text-xs text-slate-500 bg-slate-700 px-2 py-0.5 rounded">inactive</span>}
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => toggleActive(game)} className="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition">
-                    {game.isActive ? 'Deactivate' : 'Activate'}
-                  </button>
-                  <button onClick={() => router.push(`/admin/games/${game._id}`)} className="text-xs bg-slate-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg transition">
-                    Edit
-                  </button>
-                  <button onClick={() => deleteGame(String(game._id))} className="text-xs bg-slate-700 hover:bg-red-600 px-3 py-1.5 rounded-lg transition">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+        
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#003B6E]/30">Active Environments</p>
+            <p className="text-xs font-bold text-[#00ADEF]">{games.length} Games Live</p>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div className="grid grid-cols-12 gap-10">
+        
+        {/* CREATE SIDEBAR */}
+        <div className="col-span-12 xl:col-span-4">
+          <div className="bg-white rounded-3xl p-8 shadow-xl shadow-[#003B6E]/5 border border-[#00ADEF]/10 sticky top-10">
+            <h3 className="text-xs font-black tracking-[0.3em] text-[#00ADEF] uppercase mb-8 flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+              New Challenge
+            </h3>
+            
+            <form onSubmit={createGame} className="space-y-6">
+              <div>
+                <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Challenge Title</label>
+                <input
+                  required
+                  className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-bold text-[#003B6E] outline-none focus:border-[#00ADEF] transition-all"
+                  placeholder="e.g. Sales IQ"
+                  value={form.title}
+                  onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Game Engine</label>
+                <select
+                  className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-bold text-[#003B6E] outline-none focus:border-[#00ADEF] appearance-none"
+                  value={form.type}
+                  onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
+                >
+                  {GAME_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={!eventId}
+                className="w-full bg-[#050e1a] hover:bg-[#00ADEF] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-lg shadow-black/10 transition-all active:scale-95 disabled:opacity-30"
+              >
+                Create Challenge
+              </button>
+              
+              {!eventId && !loading && <p className="text-amber-500 text-[10px] font-bold text-center uppercase tracking-widest">No active event selected</p>}
+              {error && <p className="text-red-500 text-[10px] font-bold text-center uppercase tracking-widest">{error}</p>}
+            </form>
+          </div>
+        </div>
+
+        {/* GAMES LIST */}
+        <div className="col-span-12 xl:col-span-8 space-y-4">
+          {loading ? (
+            <div className="p-20 text-center"><div className="w-10 h-10 border-2 border-[#00ADEF] border-t-transparent rounded-full animate-spin mx-auto" /></div>
+          ) : games.length === 0 ? (
+            <div className="bg-white rounded-3xl p-20 text-center border border-dashed border-[#00ADEF]/20">
+              <p className="text-[#003B6E]/20 text-xs font-black uppercase tracking-widest">No challenges configured yet</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {games.map(game => (
+                <div key={game._id} className="bg-white rounded-3xl p-8 border border-[#00ADEF]/10 shadow-sm hover:shadow-xl hover:border-[#00ADEF]/40 transition-all group flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full border ${
+                        game.isActive ? 'bg-[#7BC242]/10 text-[#7BC242] border-[#7BC242]/20' : 'bg-slate-100 text-slate-400 border-slate-200'
+                      }`}>
+                        {game.isActive ? 'Active' : 'Offline'}
+                      </span>
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${GAME_COLORS[game.type]}`}>{game.type}</span>
+                    </div>
+                    
+                    <h4 className="text-2xl font-black text-[#003B6E] tracking-tight group-hover:text-[#00ADEF] transition-colors mb-2">{game.title}</h4>
+                    <p className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest mb-8">System ID: {String(game._id).slice(-6)}</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <button 
+                      onClick={() => router.push(`/admin/manage?gameId=${game._id}`)}
+                      className="w-full bg-[#00ADEF] hover:bg-[#0096D1] text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-[#00ADEF]/20 transition-all"
+                    >
+                      Manage Content
+                    </button>
+                    <div className="grid grid-cols-3 gap-2">
+                       <button onClick={() => toggleActive(game)} className="bg-[#F8FBFF] hover:bg-slate-100 text-[#003B6E] text-[9px] font-black py-2.5 rounded-xl uppercase tracking-widest border border-[#E2E8F0]">
+                        {game.isActive ? 'Pause' : 'Play'}
+                      </button>
+                      <button onClick={() => router.push(`/admin/games/${game._id}`)} className="bg-[#F8FBFF] hover:bg-slate-100 text-[#003B6E] text-[9px] font-black py-2.5 rounded-xl uppercase tracking-widest border border-[#E2E8F0]">
+                        Edit
+                      </button>
+                      <button onClick={() => deleteGame(String(game._id))} className="bg-red-50 hover:bg-red-100 text-red-500 text-[9px] font-black py-2.5 rounded-xl uppercase tracking-widest border border-red-200/50 transition-colors">
+                        Drop
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </main>
   )
 }

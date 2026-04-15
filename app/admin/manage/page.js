@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 
 export default function AdminManagePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const targetGameId = searchParams.get('gameId')
+
   const [games, setGames] = useState([])
   const [selectedGame, setSelectedGame] = useState(null)
   const [questions, setQuestions] = useState([])
@@ -29,10 +32,15 @@ export default function AdminManagePage() {
       try {
         const data = await api.getAdminGames()
         setGames(data)
+        
         if (data.length > 0) {
-          const first = data[0]
-          setSelectedGame(first)
-          const qData = await api.getAdminQuestions(first._id)
+          // If gameId is in URL, find it, otherwise take the first
+          const active = targetGameId 
+            ? data.find(g => String(g._id) === targetGameId) || data[0]
+            : data[0]
+            
+          setSelectedGame(active)
+          const qData = await api.getAdminQuestions(active._id)
           setQuestions(qData)
           setFormData(prev => ({ ...prev, order: qData.length + 1 }))
         }
@@ -43,7 +51,7 @@ export default function AdminManagePage() {
       }
     }
     loadGames()
-  }, [])
+  }, [targetGameId])
 
   async function handleSelectGame(game) {
     setSelectedGame(game)
@@ -138,371 +146,317 @@ export default function AdminManagePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F0F9FF] text-[#003B6E] p-6 font-sans selection:bg-[#00ADEF]/20">
-      <div className="max-w-[1400px] mx-auto space-y-8 animate-in fade-in duration-500">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#00ADEF]/10 pb-6">
-          <div className="flex items-center gap-4">
-            <button onClick={() => router.push('/admin')} className="text-[#003B6E]/40 hover:text-[#00ADEF] transition text-xs font-black tracking-widest">
-              ← BACK
-            </button>
-            <h1 className="text-3xl font-black tracking-tight uppercase">Manage Content</h1>
+    <main className="p-10 animate-in fade-in duration-500">
+      
+      {/* HEADER & TABS */}
+      <div className="flex flex-col gap-8 mb-10">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-black text-[#003B6E] tracking-tight uppercase">Content <span className="text-[#00ADEF]">Engine</span></h1>
+            <p className="text-sm text-[#003B6E]/40 font-bold uppercase tracking-widest mt-1">Design and curate the SalesVerse experience</p>
           </div>
-          <div className="flex gap-2">
-            {games.map(g => (
-              <button
-                key={g._id}
-                onClick={() => handleSelectGame(g)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase transition ${
-                  selectedGame?._id === g._id 
-                    ? 'bg-[#00ADEF] text-white shadow-lg shadow-[#00ADEF]/20' 
-                    : 'bg-white text-[#003B6E]/40 border border-[#00ADEF]/10 hover:bg-[#F8FBFF]'
-                }`}
-              >
-                {g.title}
-              </button>
-            ))}
+          <div className="flex items-center gap-4 bg-white p-2 rounded-2xl shadow-sm border border-[#00ADEF]/10">
+            <div className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase bg-[#00ADEF]/10 text-[#00ADEF]`}>
+              Editing Mode
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Form */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl p-6 border border-[#00ADEF]/10 shadow-lg shadow-[#00ADEF]/5 sticky top-6">
-              <div className="mb-6">
-                <p className="text-[10px] text-[#00ADEF]/50 uppercase tracking-widest leading-none mb-1">Current Game</p>
-                <p className="text-xl font-black text-[#003B6E]">{selectedGame?.title}</p>
-              </div>
+        <div className="flex bg-white/50 backdrop-blur-md p-1.5 rounded-2xl border border-[#00ADEF]/10 w-fit">
+          {games.map(g => (
+            <button
+              key={g._id}
+              onClick={() => handleSelectGame(g)}
+              className={`px-6 py-3 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase transition-all whitespace-nowrap ${
+                selectedGame?._id === g._id 
+                  ? 'bg-[#050e1a] text-white shadow-xl shadow-black/20' 
+                  : 'text-[#003B6E]/40 hover:text-[#003B6E] hover:bg-white/50'
+              }`}
+            >
+              {g.title}
+            </button>
+          ))}
+        </div>
+      </div>
 
-              <h2 className="text-xs font-black tracking-[0.2em] text-[#00ADEF] mb-6 uppercase">
-                {editingId ? 'Edit Question' : 'Add New Question'}
-              </h2>
-              
-              <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-12 gap-10">
+        
+        {/* FORM SIDEBAR */}
+        <div className="col-span-12 xl:col-span-5">
+          <div className="bg-white rounded-3xl p-8 shadow-xl shadow-[#003B6E]/5 border border-[#00ADEF]/10 sticky top-10 overflow-hidden">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xs font-black tracking-[0.3em] text-[#00ADEF] uppercase flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={editingId ? "M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-5 5l8.5-8.5a2.121 2.121 0 00-3-3L9 7l5 5z" : "M12 4v16m8-8H4"} /></svg>
+                {editingId ? 'Edit Draft' : 'New Content'}
+              </h3>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => resetForm(selectedGame, questions.length + 1)}
+                  className="text-[10px] font-black text-[#003B6E]/30 hover:text-red-500 uppercase tracking-widest transition-colors"
+                >
+                  Clear Edit
+                </button>
+              )}
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-6 max-h-[70vh] overflow-y-auto pr-4 custom-scrollbar">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Question Text</label>
+                  <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Question or Statement</label>
                   <textarea
                     required
                     value={formData.text}
                     onChange={e => setFormData({ ...formData, text: e.target.value })}
-                    className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm text-[#003B6E] focus:border-[#00ADEF] outline-none transition h-32"
-                    placeholder="Enter the question or statement..."
+                    className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-bold text-[#003B6E] outline-none focus:border-[#00ADEF] transition-all h-32 resize-none"
+                    placeholder="Describe the challenge or scenario..."
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Order</label>
+                    <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Display Order</label>
                     <input
                       type="number"
                       required
                       value={formData.order}
                       onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                      className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition"
+                      className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-bold text-[#003B6E] outline-none focus:border-[#00ADEF]"
                     />
                   </div>
 
                   {selectedGame?.type === 'INTERVIEW' && (
-                    <div className="col-span-2 space-y-4 border border-[#993C1D]/20 rounded-xl p-4 bg-[#993C1D]/5">
-                      <p className="text-[10px] font-bold text-[#993C1D] uppercase tracking-widest">Interviewer Hub Config</p>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Question Type</label>
-                          <select
-                            value={formData.interviewType}
-                            onChange={e => setFormData({ ...formData, interviewType: e.target.value })}
-                            className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-[#993C1D] outline-none transition"
-                          >
-                            <option value="open">Open Opinion</option>
-                            <option value="tf">True / False</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Interviewer Tip (Optional)</label>
-                          <textarea
-                            value={formData.aiRationale}
-                            onChange={e => setFormData({ ...formData, aiRationale: e.target.value })}
-                            className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:border-[#993C1D] outline-none transition h-10"
-                            placeholder="e.g. Expected: FALSE..."
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Target Personas</label>
-                        <div className="grid grid-cols-3 gap-2 mt-2">
-                          {['cxo', 'bdo', 'operator', 'agent', 'association', 'insuretech'].map(p => (
-                            <label key={p} className="flex items-center gap-2 cursor-pointer group">
-                              <input
-                                type="checkbox"
-                                checked={formData.personas?.includes(p)}
-                                onChange={e => {
-                                  const newP = e.target.checked 
-                                    ? [...(formData.personas || []), p]
-                                    : (formData.personas || []).filter(x => x !== p)
-                                  setFormData({ ...formData, personas: newP })
-                                }}
-                                className="w-4 h-4 rounded border-white/10 bg-[#050e1a] accent-[#993C1D]"
-                              />
-                              <span className="text-[10px] uppercase tracking-widest text-white/30 group-hover:text-white transition">{p}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
+                    <div>
+                      <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Polling Mode</label>
+                      <select
+                        value={formData.interviewType}
+                        onChange={e => setFormData({ ...formData, interviewType: e.target.value })}
+                        className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-bold text-[#003B6E] outline-none focus:border-[#00ADEF]"
+                      >
+                        <option value="open">Open Opinion</option>
+                        <option value="tf">True / False</option>
+                      </select>
                     </div>
                   )}
+
                   {selectedGame?.type === 'CROSSWORD' && (
-                    <>
-                      <div>
-                        <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Answer Word (Takaful Key)</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.answer}
-                          onChange={e => {
-                            const val = e.target.value.toUpperCase()
-                            setFormData({ ...formData, answer: val, gridLen: val.length })
-                          }}
-                          className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition uppercase"
-                          placeholder="e.g. MALAYSIA"
-                        />
-                        <p className="text-[10px] text-blue-400/50 mt-1 uppercase tracking-widest">Layout will be automatically generated</p>
-                      </div>
-                    </>
+                    <div className="col-span-2">
+                       <label className="block text-[10px] text-[#003B6E]/40 uppercase font-black tracking-widest mb-2">Correct Keyword</label>
+                       <input
+                         type="text"
+                         required
+                         value={formData.answer}
+                         onChange={e => {
+                           const val = e.target.value.toUpperCase()
+                           setFormData({ ...formData, answer: val, gridLen: val.length })
+                         }}
+                         className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-mono text-[#00ADEF] outline-none focus:border-[#00ADEF] uppercase"
+                         placeholder="E.G. TAKAFUL"
+                       />
+                       <p className="text-[9px] text-[#00ADEF]/50 mt-1 uppercase font-bold tracking-widest">Grid layout will automatically calibrate</p>
+                    </div>
                   )}
                 </div>
 
-                {(selectedGame?.type === 'QUIZ') && (
-                  <div>
-                    <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">AI Rationale</label>
-                    <textarea
-                      value={formData.aiRationale}
-                      onChange={e => setFormData({ ...formData, aiRationale: e.target.value })}
-                      className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition h-24"
-                      placeholder="Why is the recommended option correct?"
-                    />
-                  </div>
-                )}
-
-                {selectedGame?.type === 'MYTH' && (
-                  <div className="space-y-4 border border-amber-500/20 rounded-xl p-4 bg-amber-500/5">
-                    <p className="text-[10px] font-bold text-amber-500/70 uppercase tracking-widest">Beat the AI Fields</p>
-                    <div>
-                      <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Scenario Title</label>
-                      <input
+                {(selectedGame?.type === 'MYTH' || selectedGame?.type === 'AGENCY') && (
+                  <div className="space-y-4 pt-4 border-t border-[#00ADEF]/5">
+                     <p className="text-[10px] font-black text-[#00ADEF] uppercase tracking-widest">Logic & Metadata</p>
+                     {selectedGame?.type === 'MYTH' && (
+                       <input
                         type="text"
                         value={formData.answer}
                         onChange={e => setFormData({ ...formData, answer: e.target.value })}
-                        className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500/50 outline-none transition"
-                        placeholder="e.g. Lead Prioritisation"
+                        className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-3 text-sm font-bold text-[#003B6E]"
+                        placeholder="Scenario Category (e.g. Lead Management)"
                       />
-                      <p className="text-[10px] text-white/20 mt-1">Groups questions into a category — multiple questions per scenario = random challenge each round</p>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Category Chip</label>
-                      <input
-                        type="text"
-                        value={formData.sectionLabel}
-                        onChange={e => setFormData({ ...formData, sectionLabel: e.target.value })}
-                        className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500/50 outline-none transition"
-                        placeholder="e.g. SALES & DISTRIBUTION"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Host Closing Script (AI Rationale)</label>
-                      <textarea
+                     )}
+                     <textarea
                         value={formData.aiRationale}
                         onChange={e => setFormData({ ...formData, aiRationale: e.target.value })}
-                        className="w-full bg-[#050e1a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500/50 outline-none transition h-20"
-                        placeholder="e.g. The AI weighted Hassan higher. The point isn't that AI is always right..."
+                        className="w-full bg-[#F8FBFF] border border-[#E2E8F0] rounded-2xl px-5 py-3 text-xs font-medium text-[#003B6E]/70 h-24"
+                        placeholder="AI Rationale / Closing Script..."
                       />
-                    </div>
                   </div>
                 )}
 
                 {selectedGame?.type !== 'CROSSWORD' && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 pt-4 border-t border-[#00ADEF]/5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-[10px] text-white/30 uppercase tracking-widest">Options</label>
+                      <p className="text-[10px] font-black text-[#003B6E] uppercase tracking-widest">Options & Keys</p>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, options: [...formData.options, selectedGame?.type === 'MYTH' ? { label: '', shortLabel: '', subtitle: '', badge: '', isCorrect: false } : { label: '', isCorrect: false }] })}
-                        className="text-[10px] text-blue-400 hover:text-blue-300 uppercase tracking-widest"
+                        className="text-[9px] font-black text-[#00ADEF] hover:text-[#003B6E] uppercase tracking-widest transition-colors"
                       >
-                        + Add Option
+                        + Add Choice
                       </button>
                     </div>
-                    {formData.options.map((opt, i) => (
-                      <div key={i} className={`rounded-xl border p-3 space-y-2 ${opt.isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5 bg-[#050e1a]'}`}>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            required
-                            placeholder={selectedGame?.type === 'MYTH' ? `LEAD A / POLICY B / OPTION C` : `Option ${i + 1}`}
-                            value={opt.label}
-                            onChange={e => {
-                              const newOps = [...formData.options]
-                              newOps[i] = { ...newOps[i], label: e.target.value }
-                              setFormData({ ...formData, options: newOps })
-                            }}
-                            className="flex-1 bg-[#050e1a] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-blue-500 outline-none transition"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newOps = formData.options.map((o, idx) => ({ ...o, isCorrect: idx === i }))
-                              setFormData({ ...formData, options: newOps })
-                            }}
-                            className={`px-3 rounded-lg text-[10px] uppercase tracking-widest border transition whitespace-nowrap ${
-                              opt.isCorrect ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-white/5 border-white/10 text-white/20'
-                            }`}
-                          >
-                            {selectedGame?.type === 'AGENCY' ? 'AI' : 'Correct'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, options: formData.options.filter((_, idx) => idx !== i) })}
-                            className="px-2 text-white/20 hover:text-red-400 transition"
-                          >✕</button>
-                        </div>
-                        {selectedGame?.type === 'MYTH' && (
-                          <>
+                    
+                    <div className="space-y-3">
+                      {formData.options.map((opt, i) => (
+                        <div key={i} className={`p-4 rounded-2xl border transition-all ${opt.isCorrect ? 'bg-[#7BC242]/5 border-[#7BC242]/30 shadow-md shadow-[#7BC242]/5' : 'bg-[#F8FBFF] border-[#E2E8F0]'}`}>
+                          <div className="flex gap-3">
                             <input
                               type="text"
-                              placeholder="Display name — e.g. Hassan, Age 40"
-                              value={opt.shortLabel || ''}
+                              required
+                              placeholder={`Option ${i + 1}`}
+                              value={opt.label}
                               onChange={e => {
                                 const newOps = [...formData.options]
-                                newOps[i] = { ...newOps[i], shortLabel: e.target.value }
+                                newOps[i] = { ...newOps[i], label: e.target.value }
                                 setFormData({ ...formData, options: newOps })
                               }}
-                              className="w-full bg-[#050e1a] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500/50 outline-none transition"
+                              className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-[#003B6E] outline-none placeholder:opacity-30"
                             />
-                            <input
-                              type="text"
-                              placeholder="Profile data — e.g. Status: Married|Income: High|Interest: Protection"
-                              value={opt.subtitle || ''}
-                              onChange={e => {
-                                const newOps = [...formData.options]
-                                newOps[i] = { ...newOps[i], subtitle: e.target.value }
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newOps = formData.options.map((o, idx) => ({ ...o, isCorrect: idx === i }))
                                 setFormData({ ...formData, options: newOps })
                               }}
-                              className="w-full bg-[#050e1a] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500/50 outline-none transition"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Reveal rationale — shown in AI reveal screen"
-                              value={opt.badge || ''}
-                              onChange={e => {
-                                const newOps = [...formData.options]
-                                newOps[i] = { ...newOps[i], badge: e.target.value }
-                                setFormData({ ...formData, options: newOps })
-                              }}
-                              className="w-full bg-[#050e1a] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500/50 outline-none transition"
-                            />
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="pt-4 flex gap-2">
-                  <button
-                    disabled={loading}
-                    type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-quiz-label text-[10px] tracking-widest uppercase py-4 rounded-xl transition disabled:opacity-50"
-                  >
-                    {loading ? 'SAVING...' : editingId ? 'UPDATE QUESTION' : 'ADD QUESTION'}
-                  </button>
-                  {editingId && (
-                    <button
-                      type="button"
-                      onClick={() => resetForm(selectedGame, questions.length + 1)}
-                      className="bg-white/5 hover:bg-white/10 text-white/40 px-4 rounded-xl text-[10px] uppercase font-quiz-label"
-                    >
-                      Cancel
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* List */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="font-quiz-label text-xs tracking-[0.2em] text-white/30 uppercase">
-              Current Questions ({questions.length})
-            </h2>
-            
-            {questions.length === 0 ? (
-              <div className="bg-white/5 rounded-2xl p-12 text-center border border-dashed border-white/10">
-                <p className="text-white/20 text-sm">No questions for this game yet.</p>
-              </div>
-            ) : (
-              questions.map((q, i) => (
-                <div 
-                  key={q._id} 
-                  className={`bg-[#0c1d38] border border-white/5 rounded-2xl p-6 shadow-xl transition-all duration-300 animate-fade-up`}
-                  style={{ animationDelay: `${i * 0.05}s` }}
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xs font-bold text-blue-500">#{q.order}</span>
-                        <span className="text-white/20 text-[10px] uppercase tracking-widest">{selectedGame?.type}</span>
-                      </div>
-                      <p className="text-white text-lg font-light leading-snug">{q.text}</p>
-                      
-                      {q.options?.length > 0 && (
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {q.options.map((opt, oi) => (
-                            <span 
-                              key={oi} 
-                              className={`text-[10px] px-3 py-1 rounded-full border ${
-                                opt.isCorrect ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-white/5 border-white/10 text-white/40'
+                              className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                opt.isCorrect ? 'bg-[#7BC242] text-white border-transparent' : 'bg-white text-[#003B6E]/30 border-[#E2E8F0] hover:text-[#00ADEF]'
                               }`}
                             >
+                              {selectedGame?.type === 'AGENCY' ? 'TARGET' : 'KEY'}
+                            </button>
+                            <button type="button" onClick={() => setFormData({ ...formData, options: formData.options.filter((_, idx) => idx !== i) })} className="text-[#003B6E]/20 hover:text-red-500 transition-colors">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                          </div>
+                          {selectedGame?.type === 'MYTH' && (
+                            <div className="mt-3 space-y-2 pt-3 border-t border-[#00ADEF]/5">
+                              <input placeholder="Short Name" value={opt.shortLabel} onChange={e => {const n=[...formData.options]; n[i].shortLabel=e.target.value; setFormData({...formData, options:n})}} className="w-full bg-white/50 rounded-xl px-3 py-1.5 text-[10px] font-bold outline-none" />
+                              <input placeholder="Metadata (Bio)" value={opt.subtitle} onChange={e => {const n=[...formData.options]; n[i].subtitle=e.target.value; setFormData({...formData, options:n})}} className="w-full bg-white/50 rounded-xl px-3 py-1.5 text-[10px] outline-none" />
+                              <input placeholder="Reveal Script" value={opt.badge} onChange={e => {const n=[...formData.options]; n[i].badge=e.target.value; setFormData({...formData, options:n})}} className="w-full bg-white/50 rounded-xl px-3 py-1.5 text-[10px] italic outline-none" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-6">
+                 <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full bg-[#050e1a] hover:bg-[#00ADEF] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-black/10 transition-all active:scale-95 disabled:opacity-30"
+                >
+                  {loading ? 'Processing...' : editingId ? 'Update Content' : 'Publish Content'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* CONTENT LIST */}
+        <div className="col-span-12 xl:col-span-7 space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-xs font-black tracking-[0.3em] text-[#003B6E]/40 uppercase">Published Challenge Stack ({questions.length})</h2>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#7BC242] animate-pulse" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#7BC242]">Real-time Sync</span>
+            </div>
+          </div>
+          
+          {questions.length === 0 ? (
+            <div className="bg-white rounded-3xl p-32 text-center border border-dashed border-[#00ADEF]/20 flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-[#F8FBFF] rounded-2xl flex items-center justify-center text-[#00ADEF]/20 mb-6">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+              </div>
+              <p className="text-[#003B6E]/20 text-xs font-black uppercase tracking-widest leading-relaxed">No content modules deployed<br/>for this challenger engine</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {questions.map((q, i) => (
+                <div 
+                  key={q._id} 
+                  className="bg-white rounded-3xl p-8 border border-[#00ADEF]/10 shadow-sm transition-all hover:shadow-xl hover:border-[#00ADEF]/40 group relative overflow-hidden"
+                >
+                  {/* Background Number */}
+                  <div className="absolute -bottom-4 -right-2 text-[120px] font-black text-[#003B6E]/[0.02] leading-none pointer-events-none tracking-tighter">
+                    {q.order}
+                  </div>
+
+                  <div className="flex items-start justify-between relative z-10">
+                    <div className="flex-1 pr-10">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="bg-[#050e1a] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-[0.1em]">#{q.order}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${
+                          selectedGame?.type === 'CROSSWORD' ? 'text-amber-500' : 
+                          selectedGame?.type === 'INTERVIEW' ? 'text-[#00ADEF]' : 'text-[#7BC242]'
+                        }`}>
+                          {selectedGame?.type} ENGINE
+                        </span>
+                      </div>
+                      
+                      <p className="text-xl font-black text-[#003B6E] leading-tight mb-6">{q.text}</p>
+                      
+                      {q.options?.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {q.options.map((opt, oi) => (
+                            <div 
+                              key={oi} 
+                              className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border flex items-center gap-2 ${
+                                opt.isCorrect ? 'bg-[#7BC242]/10 border-[#7BC242]/20 text-[#7BC242]' : 'bg-[#F8FBFF] border-[#E2E8F0] text-[#003B6E]/40'
+                              }`}
+                            >
+                              {opt.isCorrect && <span className="w-1 h-1 rounded-full bg-[#7BC242]" />}
                               {opt.label}
-                            </span>
+                            </div>
                           ))}
                         </div>
                       )}
-                      
+
                       {q.answer && (
-                        <div className="mt-3 flex gap-4 text-[10px] font-bold uppercase tracking-widest">
-                          <div>
-                            <span className="text-white/20">Answer: </span>
-                            <span className="text-amber-400">{q.answer}</span>
-                          </div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#00ADEF]/5 text-[#00ADEF] text-[10px] font-black border border-[#00ADEF]/10 uppercase tracking-widest">
+                          Key: {q.answer}
                         </div>
                       )}
                     </div>
-                    
-                    <div className="flex gap-2">
-                      <button
+
+                    <div className="flex flex-col gap-2">
+                       <button
                         onClick={() => handleEdit(q)}
-                        className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-white/40 hover:text-white transition"
-                        title="Edit"
+                        className="w-10 h-10 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] text-[#003B6E]/30 flex items-center justify-center hover:bg-[#00ADEF] hover:text-white transition-all shadow-sm"
+                        title="Edit Module"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-5 5l8.5-8.5a2.121 2.121 0 00-3-3L9 7l5 5z"></path></svg>
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-5 5l8.5-8.5a2.121 2.121 0 00-3-3L9 7l5 5z"></path></svg>
                       </button>
                       <button
                         onClick={() => handleDelete(q._id)}
-                        className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400 transition"
-                        title="Delete"
+                        className="w-10 h-10 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] text-[#003B6E]/30 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                        title="Delete Module"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                       </button>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
+
       </div>
-    </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(0, 173, 239, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 173, 239, 0.3);
+        }
+      `}</style>
+    </main>
   )
 }

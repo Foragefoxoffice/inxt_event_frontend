@@ -97,190 +97,128 @@ function OptionCard({ option, selected, onSelect, index }) {
   )
 }
 
-function RevealScreen({ question, playerOptionId, onNext, isLast, stats, questionIndex, totalQuestions }) {
+function RevealScreen({ question, playerOptionId, onNext, onSkipToResults, isLast, questionIndex, totalQuestions }) {
   const playerOpt = question.options.find(o => o.optionId === playerOptionId)
   const aiOpt = question.options.find(o => o.isCorrect)
   const matched = playerOptionId && playerOpt?.isCorrect
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F0F9FF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: matched ? '#F0FDF8' : '#FFF8F0', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        @keyframes mythPop { 0% { opacity:0; transform: scale(0.85); } 60% { transform: scale(1.04); } 100% { opacity:1; transform: scale(1); } }
         @keyframes mythFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
       {/* Top bar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #E2E8F0', padding: '16px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 2 }}>
-              SALESVERSE — AI REVEAL
-            </div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#003B6E' }}>
-              Scenario {questionIndex + 1} — {question.scenarioTitle || question.text.slice(0, 30)}
-            </div>
+      <div style={{ background: '#fff', borderBottom: '1px solid #E2E8F0', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase' }}>
+            BEAT THE AI · REVEAL
           </div>
-          {question.sectionLabel && (
-            <div style={{
-              background: 'rgba(0,173,239,0.08)', border: '1px solid rgba(0,173,239,0.12)',
-              borderRadius: 6, padding: '4px 10px',
-              fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
-              color: '#00ADEF', textTransform: 'uppercase', whiteSpace: 'nowrap'
-            }}>{question.sectionLabel}</div>
-          )}
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#003B6E', marginTop: 2 }}>
+            Scenario {questionIndex + 1} — {question.scenarioTitle || question.text.slice(0, 32)}
+          </div>
         </div>
+        {question.sectionLabel && (
+          <div style={{ background: 'rgba(0,173,239,0.08)', border: '1px solid rgba(0,173,239,0.15)', borderRadius: 6, padding: '4px 10px', fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', color: '#00ADEF', textTransform: 'uppercase' }}>
+            {question.sectionLabel}
+          </div>
+        )}
       </div>
 
-      <div style={{ flex: 1, padding: '24px 20px', maxWidth: 760, margin: '0 auto', width: '100%', overflow: 'auto' }}>
+      <div style={{ flex: 1, padding: '20px 20px 28px', maxWidth: 680, margin: '0 auto', width: '100%' }}>
 
-        {/* Choice comparison */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16, animation: 'mythFadeUp 0.4s ease both' }}>
-          {/* Player's choice */}
+        {/* Verdict */}
+        <div style={{ textAlign: 'center', padding: '24px 0 20px', animation: 'mythPop 0.45s ease both' }}>
           <div style={{
-            background: matched ? 'rgba(16,185,129,0.04)' : '#fff',
-            border: `1px solid ${matched ? 'rgba(16,185,129,0.3)' : '#E2E8F0'}`,
-            borderRadius: 14, padding: '20px', position: 'relative'
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            background: matched ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.1)',
+            border: `1.5px solid ${matched ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.25)'}`,
+            borderRadius: 50, padding: '10px 22px'
           }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.2em', color: '#64748B', textTransform: 'uppercase', marginBottom: 8 }}>
-              YOUR CHOICE
+            <span style={{ fontSize: 22 }}>{matched ? '✓' : '✗'}</span>
+            <span style={{ fontSize: 15, fontWeight: 900, letterSpacing: '0.12em', color: matched ? '#059669' : '#DC2626', textTransform: 'uppercase' }}>
+              {matched ? 'You Matched the AI!' : 'AI Thinks Differently'}
+            </span>
+          </div>
+        </div>
+
+        {/* Choice comparison — names only, no badge text */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16, animation: 'mythFadeUp 0.4s ease 0.1s both' }}>
+          {/* Player */}
+          <div style={{
+            background: '#fff',
+            border: `1.5px solid ${matched ? 'rgba(16,185,129,0.4)' : '#E2E8F0'}`,
+            borderRadius: 14, padding: '18px 20px'
+          }}>
+            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 6 }}>Your Choice</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: matched ? '#059669' : '#64748B', lineHeight: 1.3 }}>
+              {playerOpt ? playerOpt.label : 'No answer'}
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#003B6E', marginBottom: 8, lineHeight: 1.3 }}>
-              {playerOpt ? `${playerOpt.label} — ${playerOpt.shortLabel || ''}` : 'No answer given'}
-            </div>
-            <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, margin: 0 }}>
-              {playerOpt?.badge || '—'}
-            </p>
-            {matched && (
-              <div style={{
-                marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: 'rgba(16,185,129,0.1)', borderRadius: 6, padding: '4px 10px'
-              }}>
-                <span style={{ color: '#10B981', fontSize: 12 }}>✓</span>
-                <span style={{ fontSize: 11, fontWeight: 800, color: '#10B981', letterSpacing: '0.1em' }}>MATCHED AI</span>
-              </div>
+            {playerOpt?.shortLabel && (
+              <div style={{ fontSize: 15, fontWeight: 900, color: '#003B6E', marginTop: 4 }}>{playerOpt.shortLabel}</div>
             )}
           </div>
 
-          {/* AI's choice */}
+          {/* AI */}
           <div style={{
             background: '#fff',
             border: '1.5px solid #00ADEF',
-            borderRadius: 14, padding: '20px'
+            borderRadius: 14, padding: '18px 20px'
           }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 8 }}>
-              AI'S CHOICE — SALESVERSE
+            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 6 }}>AI's Choice · SalesVerse</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#00ADEF', lineHeight: 1.3 }}>
+              {aiOpt ? aiOpt.label : '—'}
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#003B6E', marginBottom: 8, lineHeight: 1.3 }}>
-              {aiOpt ? `${aiOpt.label} — ${aiOpt.shortLabel || ''}` : '—'}
-            </div>
-            <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, margin: '0 0 8px' }}>
-              {aiOpt?.badge || '—'}
-            </p>
-            {aiOpt?.badge && (
-              <p style={{ fontSize: 12, color: '#00ADEF', fontStyle: 'italic', lineHeight: 1.5, margin: 0 }}>
-                « {aiOpt.badge.split('.')[0]}. »
-              </p>
+            {aiOpt?.shortLabel && (
+              <div style={{ fontSize: 15, fontWeight: 900, color: '#003B6E', marginTop: 4 }}>{aiOpt.shortLabel}</div>
             )}
+            <div style={{ fontSize: 11, color: '#00ADEF', fontStyle: 'italic', marginTop: 8 }}>« Correct — AI agrees. »</div>
           </div>
         </div>
 
-        {/* AI insight highlight */}
+        {/* AI insight — one clean paragraph */}
         {question.aiRationale && (
           <div style={{
-            background: '#fff',
-            border: '1px solid #E2E8F0',
-            borderLeft: '4px solid #00ADEF',
-            borderRadius: 12, padding: '16px 20px', marginBottom: 16,
-            animation: 'mythFadeUp 0.4s ease 0.1s both'
+            background: '#fff', borderRadius: 12, padding: '16px 20px', marginBottom: 20,
+            borderLeft: `4px solid ${matched ? '#10B981' : '#00ADEF'}`,
+            animation: 'mythFadeUp 0.4s ease 0.15s both'
           }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#003B6E', lineHeight: 1.65, margin: 0 }}>
+            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: matched ? '#10B981' : '#00ADEF', textTransform: 'uppercase', marginBottom: 6 }}>
+              Why the AI chose this
+            </div>
+            <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.65, margin: 0 }}>
               {question.aiRationale}
             </p>
           </div>
         )}
 
-        {/* Host script */}
-        {question.aiRationale && (
-          <div style={{
-            borderLeft: '3px solid rgba(0,173,239,0.4)',
-            paddingLeft: 16, marginBottom: 24,
-            animation: 'mythFadeUp 0.4s ease 0.15s both'
-          }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 6 }}>
-              HOST CLOSING SCRIPT
-            </div>
-            <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.65, margin: 0 }}>
-              "{question.aiRationale} Want to see how it works live?"
-            </p>
-          </div>
-        )}
-
-        {/* Stats row */}
-        <div style={{
-          display: 'flex', justifyContent: 'center', gap: 40, marginBottom: 24,
-          animation: 'mythFadeUp 0.4s ease 0.2s both'
-        }}>
-          {stats && (
-            <>
-              <StatPill value={stats.totalPlayers} label="Players Today" color="#003B6E" />
-              <StatPill value={`${stats.matchedPct ?? 0}%`} label="Matched AI" color="#10B981" />
-              <StatPill value={`${stats.surprisedPct ?? 0}%`} label="Surprised" color="#F87171" />
-            </>
-          )}
-        </div>
 
         {/* Navigation */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, animation: 'mythFadeUp 0.4s ease 0.25s both' }}>
-          {!isLast && (
-            <button
-              onClick={onNext}
-              style={{
-                gridColumn: '1 / 2',
-                padding: '14px', borderRadius: 10,
-                border: '1.5px solid #E2E8F0',
-                background: '#fff',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-                color: '#003B6E', cursor: 'pointer'
-              }}
-            >NEXT SCENARIO →</button>
-          )}
-          <button
-            onClick={() => window.location.href = '/play'}
-            style={{
-              padding: '14px', borderRadius: 10,
-              border: '1.5px solid #E2E8F0',
-              background: '#fff',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-              color: '#64748B', cursor: 'pointer'
-            }}
-          >ALL SCENARIOS</button>
-          {isLast && (
-            <button
-              onClick={onNext}
-              style={{
-                padding: '14px', borderRadius: 10,
+        <div style={{ display: 'grid', gridTemplateColumns: isLast ? '1fr' : '1fr 1fr', gap: 10, animation: 'mythFadeUp 0.4s ease 0.25s both' }}>
+          {isLast ? (
+            <button onClick={onNext} style={{
+              padding: '16px', borderRadius: 12, border: 'none',
+              background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
+              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 900,
+              letterSpacing: '0.15em', color: '#fff', cursor: 'pointer',
+              boxShadow: '0 8px 20px rgba(0,173,239,0.25)'
+            }}>SEE MY RESULTS →</button>
+          ) : (
+            <>
+              <button onClick={onNext} style={{
+                padding: '15px', borderRadius: 12, border: '1.5px solid #E2E8F0',
+                background: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontSize: 12, fontWeight: 800, letterSpacing: '0.15em', color: '#003B6E', cursor: 'pointer'
+              }}>NEXT SCENARIO →</button>
+              <button onClick={onSkipToResults} style={{
+                padding: '15px', borderRadius: 12, border: 'none',
                 background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-                border: 'none',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-                color: '#fff', cursor: 'pointer'
-              }}
-            >SEE MY RESULTS →</button>
-          )}
-          {!isLast && (
-            <button
-              onClick={() => window.location.href = '/play'}
-              style={{
-                padding: '14px', borderRadius: 10,
-                background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-                border: 'none',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-                color: '#fff', cursor: 'pointer'
-              }}
-            >SEE SALESVERSE LIVE →</button>
+                fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 800,
+                letterSpacing: '0.15em', color: '#fff', cursor: 'pointer'
+              }}>SEE MY RESULTS →</button>
+            </>
           )}
         </div>
 
@@ -484,7 +422,7 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
   const timerRef = useRef(null)
 
   useEffect(() => {
-    if (!eventId) return
+    if (!eventId || step !== 'reveal') return
     api.getStats(eventId).then(data => {
       const myth = data.games.find(g => g.gameType === 'MYTH')
       const matchedPct = myth?.aiMatchPercent ?? 0
@@ -494,7 +432,7 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
         surprisedPct: 100 - matchedPct
       })
     }).catch(() => {})
-  }, [])
+  }, [step, currentIdx])
 
   // Timer management
   useEffect(() => {
@@ -527,19 +465,25 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
     setStep('reveal')
   }
 
+  function buildPayload() {
+    // Only submit questions the player actually answered (not timed-out/skipped)
+    const played = questions.slice(startFromIdx)
+    return played
+      .filter(q => answers[q.questionId])
+      .map(q => ({ questionId: q.questionId, selectedOptionId: answers[q.questionId] }))
+  }
+
   function handleNext() {
     if (isLast) {
-      // Submit answers for questions that were actually shown (from startFromIdx to end)
-      const played = questions.slice(startFromIdx)
-      const payload = played.map(q => ({
-        questionId: q.questionId,
-        selectedOptionId: answers[q.questionId] || null
-      }))
-      onSubmit(payload)
+      onSubmit(buildPayload())
     } else {
       setCurrentIdx(i => i + 1)
       setStep('question')
     }
+  }
+
+  function handleSkipToResults() {
+    onSubmit(buildPayload())
   }
 
   // ── INTRO SCREEN ─────────────────────────────────────────────────────────
@@ -676,8 +620,8 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
         question={q}
         playerOptionId={selected}
         onNext={handleNext}
+        onSkipToResults={handleSkipToResults}
         isLast={isLast}
-        stats={stats}
         questionIndex={currentIdx}
         totalQuestions={questions.length}
       />
