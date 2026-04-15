@@ -287,7 +287,7 @@ export function AgencyGame({ questions = [], onSubmit, submitting, eventId }) {
       </main>
 
       {/* REFINED FLOATING FOOTER */}
-      <footer className="fixed bottom-0 left-0 right-0 p-8 z-40 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/90 to-transparent pointer-events-none">
+      <footer className="fixed bottom-0 left-0 right-0 p-8 z-40 bg-linear-to-t from-[#f8fafc] via-[#f8fafc]/90 to-transparent pointer-events-none">
         <div className="max-w-2xl mx-auto flex gap-4 pointer-events-auto">
           {step > 0 && (
             <button

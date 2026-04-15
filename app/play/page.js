@@ -118,12 +118,12 @@ export default function PlayPage() {
             </div>
             <div className={styles.inputGroup}>
               <label className={styles.label}>Company / Agency</label>
-              <input className={styles.input} placeholder="e.g. Takaful Direct" value={form.company}
+              <input className={styles.input} placeholder="e.g. Direct" value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))} required />
             </div>
             <div className={styles.inputGroup}>
               <label className={styles.label}>Email Address</label>
-              <input className={styles.input} type="email" placeholder="e.g. arjun@takaful.com" value={form.email}
+              <input className={styles.input} type="email" placeholder="e.g. arjun@.com" value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
             </div>
             <div className={styles.inputGroup}>
@@ -202,7 +202,7 @@ export default function PlayPage() {
         )}
 
         <footer className={styles.footerInfo}>
-          Takaful AI Summit · 2026 · Digital Agency Audit
+          AI Summit · 2026 · Digital Agency Audit
         </footer>
       </div>
     </div>

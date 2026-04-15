@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 const PERSONAS = [
   { id: 'cxo', icon: 'C', title: 'C-Suite / MD / CEO', desc: 'Senior leadership. Strategy and vision.' },
   { id: 'bdo', icon: 'B', title: 'Agency Mgr / BDM', desc: 'Distribution focus. Performance and productivity.' },
-  { id: 'operator', icon: 'O', title: 'Takaful Operator', desc: 'Product, digital transformation roles.' },
+  { id: 'operator', icon: 'O', title: 'Operator', desc: 'Product, digital transformation roles.' },
   { id: 'agent', icon: 'A', title: 'Senior Agent', desc: 'Frontline practitioner. Day-to-day challenges.' },
   { id: 'association', icon: 'As', title: 'Association', desc: 'Industry-wide perspective. Policy.' },
   { id: 'insuretech', icon: 'IT', title: 'InsureTech', desc: 'Technology innovators. Future-focused.' }
@@ -49,7 +49,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
   }
 
   const handleCopyPost = () => {
-    const post = `Just finished my interview for the 'Voices of Takaful AI' series at iorta TechNXT 2026. 🚀\n\nGreat insight sharing with the @iorta team!\n\n#VoicesOfTakafulAI #iortaTechNXT #SalesVerse #MTAxTIC`
+    const post = `Just finished my interview for the 'Voices of AI' series at iorta TechNXT 2026. 🚀\n\nGreat insight sharing with the @iorta team!\n\n#VoicesOfAI #iortaTechNXT #SalesVerse #MTAxTIC`
     navigator.clipboard.writeText(post)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -99,7 +99,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
           <div style={{ animation: 'slideUp 0.6s ease both' }}>
             <div style={{ textAlign: 'center', marginBottom: 56 }}>
               <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.4em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 12 }}>Myth Buster Series</div>
-              <h1 style={{ fontSize: 48, fontWeight: 900, color: '#003B6E', lineHeight: 1.1, letterSpacing: '-0.02em', textTransform: 'uppercase', margin: 0 }}>Voices of Takaful AI</h1>
+              <h1 style={{ fontSize: 48, fontWeight: 900, color: '#003B6E', lineHeight: 1.1, letterSpacing: '-0.02em', textTransform: 'uppercase', margin: 0 }}>Voices of AI</h1>
               <div style={{ height: 4, width: 60, background: '#7BC242', margin: '24px auto', borderRadius: 2 }} />
               <p style={{ fontSize: 18, color: '#64748B', maxWidth: 500, margin: '0 auto', fontWeight: 500, lineHeight: 1.5 }}>
                 Capture industry leadership insights for the <br />
@@ -504,7 +504,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#F8FAFC', padding: '16px 20px', borderRadius: 16 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ADEF' }} />
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>"You are now officially part of Voices of Takaful AI. We'll tag you when it goes live."</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>"You are now officially part of Voices of AI. We'll tag you when it goes live."</div>
                   </div>
                   <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#F8FAFC', padding: '16px 20px', borderRadius: 16 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ADEF' }} />
@@ -553,7 +553,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
                 <div style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>iorta TechNXT · MTA × TIC 2026</div>
                 <div style={{ marginBottom: 48 }}>
                   <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1 }}>MYTH BUSTER</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 8 }}>Voices of Takaful AI</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 8 }}>Voices of AI</div>
                 </div>
 
                 <div style={{ width: 120, height: 120, background: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 900, color: '#fff', margin: '0 auto 32px' }}>
@@ -567,7 +567,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
 
                 <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', width: 100, margin: '40px auto' }} />
                 <div style={{ fontSize: 11, fontWeight: 800, color: '#7BC242', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                  #VoicesOfTakafulAI #iortaTechNXT #SalesVerse
+                  #VoicesOfAI #iortaTechNXT #SalesVerse
                 </div>
               </div>
             </div>
@@ -596,7 +596,7 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
                 </div>
                 <div style={{ width: 100, height: 100, background: '#fff', padding: 8, borderRadius: 12, border: '1px solid #E2E8F0' }}>
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`https://twitter.com/intent/tweet?text=Just finished my interview for 'Voices of Takaful AI' at iorta TechNXT 2026. 🚀 @iorta #VoicesOfTakafulAI #iortaTechNXT`)}&size=100x100&color=003B6E`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`https://twitter.com/intent/tweet?text=Just finished my interview for 'Voices of AI' at iorta TechNXT 2026. 🚀 @iorta #VoicesOfAI #iortaTechNXT`)}&size=100x100&color=003B6E`}
                     alt="QR"
                     style={{ width: '100%', height: '100%' }}
                   />

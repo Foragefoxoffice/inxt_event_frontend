@@ -625,7 +625,7 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
             maxWidth: 600
           }}>
             <p style={{ fontSize: 20, color: 'rgba(255, 255, 255, 0.9)', margin: '0 0 12px', fontWeight: 500, lineHeight: 1.4 }}>
-              Test your strategy in the 30-second Takaful sales challenge.
+              Test your strategy in the 30-second sales challenge.
             </p>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 12,

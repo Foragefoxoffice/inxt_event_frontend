@@ -8,8 +8,8 @@
 
 .sidebar {
   width: 270px;
-  background-color: #0c111e;
-  /* Deeper navy/slate */
+  background-color: #003B6E;
+  /* Professional Navy Blue */
   color: white;
   display: flex;
   flex-direction: column;
@@ -117,14 +117,14 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 18px;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+  color: #003B6E;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .userName {

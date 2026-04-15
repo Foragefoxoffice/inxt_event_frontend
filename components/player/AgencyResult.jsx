@@ -255,7 +255,7 @@ export function AgencyResult({ result, eventId, sessionId }) {
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em]">Network Standards</span>
               <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">Benchmark Prototypes</h2>
-              <p className="text-slate-500 text-lg leading-relaxed">Structural patterns from high-performance Takaful agencies that have addressed these identical gaps.</p>
+              <p className="text-slate-500 text-lg leading-relaxed">Structural patterns from high-performance agencies that have addressed these identical gaps.</p>
             </div>
 
             <div className="bg-white rounded-[1.5rem] overflow-hidden shadow-sm border border-slate-200">
@@ -303,7 +303,7 @@ export function AgencyResult({ result, eventId, sessionId }) {
 
                   <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
                     <p className="text-indigo-900 border-l-4 border-l-indigo-600 pl-6 text-sm leading-relaxed">
-                      <span className="font-extrabold text-indigo-600">SalesVerse</span> is the precision distribution platform engineered for the Takaful industry. We plug structural engagement gaps with zero operational friction. Modernisation cycle: 30 days.
+                      <span className="font-extrabold text-indigo-600">SalesVerse</span> is the precision distribution platform engineered for the industry. We plug structural engagement gaps with zero operational friction. Modernisation cycle: 30 days.
                     </p>
                   </div>
 

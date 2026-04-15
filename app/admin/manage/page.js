@@ -250,7 +250,7 @@ function ManageContent() {
                     }}
                     className={styles.input}
                     style={{ fontFamily: 'monospace', color: '#0ea5e9' }}
-                    placeholder="E.G. TAKAFUL"
+                    placeholder="E.G. KEYWORD"
                   />
                 </div>
               )}

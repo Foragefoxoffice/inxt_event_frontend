@@ -80,7 +80,7 @@ export function CrosswordGame({ questions, onSubmit, submitting, eventId }) {
             iorta TechNXT · SalesVerse · MTA x TIC 2026
           </span>
           <h1 className="text-2xl md:text-3xl font-black tracking-tight font-quiz-display leading-none">
-            TAKAFUL AI CROSSWORD CHALLENGE
+            AI CROSSWORD CHALLENGE
           </h1>
         </div>
         <div className="flex items-center gap-6">

@@ -131,28 +131,35 @@ export default function ScreenPage() {
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans flex flex-col overflow-hidden">
 
       {/* 1. PROFESSIONAL HEADER */}
-      <header className="px-10 py-5 bg-[#020617] border-b border-white/5 flex items-center justify-between sticky top-0 z-50">
+      <header className="px-10 py-6 bg-white border-b border-slate-200 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-8">
-          <img src="/logo_shield.png" alt="Logo" className="h-9 w-auto" />
-          <div className="h-8 w-px bg-white/10 hidden md:block" />
+          <img 
+            src="/logo_shield.png" 
+            alt="Logo" 
+            className="h-10 w-auto" 
+            style={{ 
+              filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(167deg) brightness(101%) contrast(101%)' 
+            }}
+          />
+          <div className="h-8 w-px bg-slate-200 hidden md:block" />
           <div>
-            <div className="text-[9px] uppercase font-bold tracking-[0.3em] text-emerald-500 mb-0.5">Live Engagement Hub</div>
-            <h1 className="text-lg font-extrabold text-white tracking-tight">SALESVERSE CHALLENGE</h1>
+            <div className="text-[9px] uppercase font-black tracking-[0.3em] text-[#00ADEF] mb-0.5">Live Engagement Hub</div>
+            <h1 className="text-xl font-extrabold text-[#003B6E] tracking-tight">SALESVERSE <span className="text-[#00ADEF]">CHALLENGE</span></h1>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end mr-4">
-            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{formattedDate}</span>
-            <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mt-1">Kuala Lumpur, Malaysia</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{formattedDate}</span>
+            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mt-1">Kuala Lumpur, Malaysia</span>
           </div>
-          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black text-emerald-500 tracking-widest uppercase">LIVE SYSTEM</span>
+          <div className="flex items-center gap-2 bg-[#00ADEF]/10 border border-[#00ADEF]/20 px-4 py-2 rounded-full">
+            <div className="w-2 h-2 rounded-full bg-[#00ADEF] animate-pulse" />
+            <span className="text-[10px] font-black text-[#00ADEF] tracking-widest uppercase">LIVE SYSTEM</span>
           </div>
           <button
             onClick={refreshData}
-            className="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-widest border border-white/10 transition-all active:scale-95"
+            className="bg-[#003B6E] hover:bg-[#002b54] text-white px-5 py-2.5 rounded-xl text-[11px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-blue-900/10"
           >
             Refresh
           </button>
@@ -183,7 +190,7 @@ export default function ScreenPage() {
           <SectionHeader title="System Intelligence" subtitle="Real-time AI synchronization metrics" />
 
           <div className="grid grid-cols-2 gap-6">
-            <div className="col-span-2 bg-white rounded-[1rem] border border-slate-200/60 p-8 flex flex-col items-center justify-center relative shadow-sm hover:shadow-md transition-shadow">
+            <div className="col-span-2 bg-white rounded-2xl border border-slate-200/60 p-8 flex flex-col items-center justify-center relative shadow-sm hover:shadow-md transition-shadow">
               <div className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4">Total Booth Engagement</div>
               <div className="text-[80px] font-extrabold text-slate-900 leading-none tracking-tighter tabular-nums">{statsData.totalPlayers}</div>
               <div className="absolute top-8 right-8 flex items-center gap-2">
@@ -202,7 +209,7 @@ export default function ScreenPage() {
               <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Independent Choice</div>
             </div>
 
-            <div className="col-span-2 space-y-8 mt-4 bg-slate-50/50 p-8 rounded-[2rem] border border-dashed border-slate-200">
+            <div className="col-span-2 space-y-8 mt-4 bg-slate-50/50 p-8 rounded-4xl border border-dashed border-slate-200">
               <ProgressBar label="Consensus Rate" value={mythGame?.aiMatchPercent || 0} color="bg-emerald-500" />
               <ProgressBar label="Deviation Rate" value={100 - (mythGame?.aiMatchPercent || 0)} color="bg-blue-500" />
             </div>
@@ -216,7 +223,7 @@ export default function ScreenPage() {
 
           <div className="flex flex-col gap-6">
             {/* CROSSWORD WINNERS */}
-            <div className="bg-white rounded-[1rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="bg-slate-50 px-8 py-5 border-b border-slate-200 flex justify-between items-center">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Crossword Protocol</span>
                 <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest leading-none">Top Performers</span>
@@ -247,7 +254,7 @@ export default function ScreenPage() {
             </div>
 
             {/* AI CHALLENGE */}
-            <div className="bg-white rounded-[1rem] border border-slate-200 overflow-hidden shadow-sm flex-1">
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex-1">
               <div className="bg-slate-50 px-8 py-5 border-b border-slate-200">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Sales Accuracy Matrix</span>
               </div>

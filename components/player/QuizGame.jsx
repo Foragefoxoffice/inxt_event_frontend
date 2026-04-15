@@ -208,7 +208,7 @@ export function QuizGame({ questions, onSubmit, submitting, eventId }) {
 
           {/* Subtitle */}
           <p className="text-[#64748B] text-lg mb-10 text-center font-medium">
-            {questions.length}-question Takaful sales challenge
+            {questions.length}-question sales challenge
           </p>
 
           {/* CTA button */}

@@ -78,7 +78,7 @@ export default function AdminPage() {
                 <input
                   required
                   className={styles.input}
-                  placeholder="e.g. Takaful Summit 2026"
+                  placeholder="e.g. Summit 2026"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 />
@@ -89,7 +89,7 @@ export default function AdminPage() {
                 <input
                   required
                   className={styles.input}
-                  placeholder="takaful-2026"
+                  placeholder="-2026"
                   value={form.slug}
                   onChange={e => setForm(f => ({ ...f, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') }))}
                 />
