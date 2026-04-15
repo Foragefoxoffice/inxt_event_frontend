@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { io } from 'socket.io-client'
+import { getSocket } from '@/lib/socket'
 import { api } from '@/lib/api'
 
 export default function ScreenPage() {
@@ -39,12 +39,7 @@ export default function ScreenPage() {
     async function init() {
       try {
         const active = await refreshData()
-        const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-
-        const socket = io(socketUrl, {
-          transports: ['websocket', 'polling'],
-          reconnection: true
-        })
+        const socket = getSocket()
         socketRef.current = socket
 
         const joinRoom = () => {
