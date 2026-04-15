@@ -22,7 +22,6 @@ export default function ScreenPage() {
       const stats = await api.getStats(active.eventId)
       setStatsData(stats)
 
-      // Load Fresh Leaderboards
       const lbs = {}
       for (const game of active.games) {
         const lb = await api.getLeaderboard(game.gameId)
@@ -40,11 +39,8 @@ export default function ScreenPage() {
     async function init() {
       try {
         const active = await refreshData()
-
-        // Socket (Prioritize dedicated socket URL if provided, otherwise fallback to API URL)
         const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-        console.log('[SOCKET] Connecting to:', socketUrl)
-        
+
         const socket = io(socketUrl, {
           transports: ['websocket', 'polling'],
           reconnection: true
@@ -52,7 +48,6 @@ export default function ScreenPage() {
         socketRef.current = socket
 
         const joinRoom = () => {
-          console.log('[SOCKET] Joining event room:', active.eventId)
           socket.emit('join:event', String(active.eventId))
         }
 
@@ -60,7 +55,6 @@ export default function ScreenPage() {
         socket.on('connect', joinRoom)
 
         socket.on('stats:update', ({ gameId, stats: updatedStats }) => {
-          console.log('[SOCKET] Stats received for:', gameId)
           setStatsData(prev => {
             if (!prev) return prev
             return {
@@ -81,11 +75,7 @@ export default function ScreenPage() {
         })
 
         socket.on('leaderboard:update', ({ gameId, top5 }) => {
-          console.log('[SOCKET] Leaderboard update for:', gameId)
-          setLeaderboards(prev => ({
-            ...prev,
-            [gameId]: { entries: top5 }
-          }))
+          setLeaderboards(prev => ({ ...prev, [gameId]: { entries: top5 } }))
         })
 
         socket.on('player:joined', () => {
@@ -93,7 +83,6 @@ export default function ScreenPage() {
         })
 
         socket.on('crossword:winner', (data) => {
-          console.log('[SOCKET] Crossword winner detected!')
           setWinner(data)
         })
       } catch (err) {
@@ -107,10 +96,10 @@ export default function ScreenPage() {
 
   if (!statsData) {
     return (
-      <div className="min-h-screen bg-[#F0F9FF] flex items-center justify-center text-[#003B6E]">
-        <div className="text-center space-y-6">
-          <div className="w-12 h-12 border-2 border-[#00ADEF] border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-[#00ADEF]/10" />
-          <p className="text-[#00ADEF] font-black tracking-widest uppercase text-xs animate-pulse">Syncing SalesVerse Dashboard...</p>
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-emerald-500 font-bold uppercase tracking-widest text-xs">Initializing SalesVerse...</p>
         </div>
       </div>
     )
@@ -124,293 +113,178 @@ export default function ScreenPage() {
 
   const lbCrossword = leaderboards[crosswordGame?.gameId]?.entries || []
   const lbMyth = leaderboards[mythGame?.gameId]?.entries || []
-  const lbAgency = leaderboards[agencyGame?.gameId]?.entries || []
 
   const getCountdown = () => {
     const minutes = currentTime.getMinutes()
     const seconds = currentTime.getSeconds()
-    const totalSecondsInInterval = 30 * 60
-    const currentSeconds = (minutes % 30) * 60 + seconds
-    const remainingSeconds = totalSecondsInInterval - currentSeconds
-    
-    const displayMins = Math.floor(remainingSeconds / 60)
-    const displaySecs = remainingSeconds % 60
-    return `${String(displayMins).padStart(2, '0')}:${String(displaySecs).padStart(2, '0')}`
+    const remainingSeconds = (30 * 60) - ((minutes % 30) * 60 + seconds)
+    const m = Math.floor(remainingSeconds / 60)
+    const s = remainingSeconds % 60
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
-  const topCrosswordPlayer = lbCrossword[0]
-
   const formattedDate = currentTime.toLocaleDateString('en-US', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   })
 
   return (
-    <div className="min-h-screen bg-[#F0F9FF] text-[#003B6E] font-sans flex flex-col overflow-hidden selection:bg-[#00ADEF]/20">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans flex flex-col overflow-hidden">
 
-      {/* 1. TOP HEADER BAR */}
-      <header className="px-8 py-6 flex items-center justify-between border-b border-[#00ADEF]/10 relative z-10 bg-[#00ADEF] shadow-sm">
+      {/* 1. PROFESSIONAL HEADER */}
+      <header className="px-10 py-5 bg-[#020617] border-b border-white/5 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center gap-8">
+          <img src="/logo_shield.png" alt="Logo" className="h-9 w-auto" />
+          <div className="h-8 w-px bg-white/10 hidden md:block" />
+          <div>
+            <div className="text-[9px] uppercase font-bold tracking-[0.3em] text-emerald-500 mb-0.5">Live Engagement Hub</div>
+            <h1 className="text-lg font-extrabold text-white tracking-tight">SALESVERSE CHALLENGE</h1>
+          </div>
+        </div>
+
         <div className="flex items-center gap-6">
-          {/* Logo */}
-          <div className="flex items-center">
-            <img src="/logo_shield.png" alt="iorta TECHNXT" className="h-10 w-auto" />
+          <div className="flex flex-col items-end mr-4">
+            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{formattedDate}</span>
+            <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mt-1">Kuala Lumpur, Malaysia</span>
           </div>
-        </div>
-
-        <div className="text-center absolute left-1/2 -translate-x-1/2">
-          <div className="text-[10px] uppercase font-black tracking-[0.3em] text-[#ffff] mb-1">MTA × TIC 2026 · KUALA LUMPUR, MALAYSIA</div>
-          <h1 className="text-2xl font-black uppercase tracking-tight text-[#003B6E]">SalesVerse <span className="text-[#ffff]">Challenge</span> — Live Scores</h1>
-          <p className="text-[9px] font-bold text-[#ffff]/40 uppercase tracking-widest">{formattedDate}</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#7BC242]/10 px-3 py-1.5 rounded-full border border-[#7BC242]/20">
-            <div className="w-2 h-2 rounded-full bg-[#ffff] animate-pulse" />
-            <span className="text-[10px] font-black text-[#ffff] tracking-widest uppercase">LIVE</span>
+          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black text-emerald-500 tracking-widest uppercase">LIVE SYSTEM</span>
           </div>
-          <button 
+          <button
             onClick={refreshData}
-            className="bg-[#ffff] text-[#003B6E] px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg shadow-[#00ADEF]/20 transition-transform active:scale-95 hover:bg-[#F0F9FF]"
+            className="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-widest border border-white/10 transition-all active:scale-95"
           >
-            Update Scores
+            Refresh
           </button>
         </div>
       </header>
 
-      {/* 2. TICKER BAR */}
-      <div className="bg-[#FFFFFF] border-b border-[#00ADEF]/10 py-3 px-8 flex items-center overflow-hidden whitespace-nowrap shadow-sm z-5">
-       
-        <div className="flex items-center gap-10 animate-marquee">
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Global Players:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{statsData.totalPlayers}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Crossword Solvers:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{crosswordGame?.totalSubmissions || 0}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">AI Consensus:</span>
-            <span className="text-[#7BC242] font-black text-xs uppercase tracking-tight">{mythGame?.aiMatchPercent || 0}%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Interviews Recorded:</span>
-            <span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{interviewGame?.totalSubmissions || 0}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Current Scenario:</span>
-            <span className="text-[#003B6E] font-black text-xs uppercase tracking-tight">Lead Prioritisation</span>
-          </div>
-
-          {/* Repeating for seamless marquee */}
-          <div className="flex items-center gap-10 ml-10">
-            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">Global Players:</span><span className="text-[#00ADEF] font-black text-xs uppercase tracking-tight">{statsData.totalPlayers}</span></div>
-            <div className="flex items-center gap-2"><span className="text-[#003B6E]/40 text-[10px] uppercase font-bold tracking-widest">AI Consensus:</span><span className="text-[#7BC242] font-black text-xs uppercase tracking-tight">{mythGame?.aiMatchPercent || 0}%</span></div>
-          </div>
+      {/* 2. SUBTLE TICKER */}
+      <div className="bg-white border-b border-slate-200 py-3 px-10 flex items-center overflow-hidden whitespace-nowrap z-40">
+        <div className="flex items-center gap-12 animate-marquee">
+          {[1, 2].map(i => (
+            <div key={i} className="flex items-center gap-12">
+              <StatItem label="Active Challengers" value={statsData.totalPlayers} color="text-blue-600" />
+              <StatItem label="Global Submissions" value={crosswordGame?.totalSubmissions || 0} color="text-slate-600" />
+              <StatItem label="AI Consensus" value={`${mythGame?.aiMatchPercent || 0}%`} color="text-emerald-600" />
+              <StatItem label="Market Voices" value={interviewGame?.totalSubmissions || 0} color="text-blue-600" />
+              <StatItem label="Current Phase" value="Lead Prioritisation" color="text-slate-900" />
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 3. MAIN CONTENT GRID */}
-      <main className="flex-1 p-8 grid grid-cols-12 gap-8 overflow-hidden z-0">
+      {/* 3. CORE DASHBOARD CONTENT */}
+      <main className="flex-1 p-10 grid grid-cols-12 gap-10 overflow-hidden">
 
-        {/* LEFT COLUMN (Intelligence) */}
-        <div className="col-span-12 lg:col-span-6 flex flex-col gap-8">
+        {/* LEFT COLUMN: ANALYTICS */}
+        <div className="col-span-12 lg:col-span-6 flex flex-col gap-10">
 
-          {/* AI VS HUMAN RESULTS */}
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50">AI VS HUMAN RESULTS</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2 bg-white rounded-3xl border border-[#00ADEF]/10 p-10 flex flex-col items-center justify-center relative shadow-xl shadow-[#003B6E]/5">
-                <div className="text-8xl font-black text-[#00ADEF] leading-none mb-2 tracking-tighter tabular-nums">{statsData.totalPlayers}</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#003B6E]/30 text-center">Booth Challengers Today</div>
-              </div>
+          <SectionHeader title="System Intelligence" subtitle="Real-time AI synchronization metrics" />
 
-              <div className="bg-[#FFFFFF] border border-[#00ADEF]/20 rounded-2xl p-6 text-center shadow-md transition-all hover:shadow-lg">
-                <div className="text-4xl font-black text-[#7BC242] leading-none mb-1 tabular-nums">{mythGame?.aiMatchPercent || 0}%</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-[#7BC242]/60 leading-tight">Agreed With AI</div>
-              </div>
-              <div className="bg-[#FFFFFF] border border-[#00ADEF]/20 rounded-2xl p-6 text-center shadow-md transition-all hover:shadow-lg">
-                <div className="text-4xl font-black text-[#00ADEF] leading-none mb-1 tabular-nums">{100 - (mythGame?.aiMatchPercent || 0)}%</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-[#00ADEF]/60 leading-tight">Surprised By AI</div>
-              </div>
-
-              <div className="col-span-2 space-y-6 pt-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#7BC242]/10 flex items-center justify-center font-black text-[9px] text-[#7BC242]">H</div>
-                      <span className="text-[11px] font-black uppercase tracking-widest text-[#003B6E]/60">Humans matched AI</span>
-                    </div>
-                    <span className="text-sm font-black text-[#7BC242] tabular-nums">{mythGame?.aiMatchPercent || 0}%</span>
-                  </div>
-                  <div className="h-3 bg-white rounded-full overflow-hidden border border-[#00ADEF]/10">
-                    <div className="h-full bg-[#7BC242] rounded-full transition-all duration-1000 ease-out shadow-sm" style={{ width: `${mythGame?.aiMatchPercent || 0}%` }} />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#00ADEF]/10 flex items-center justify-center font-black text-[9px] text-[#00ADEF]">AI</div>
-                      <span className="text-[11px] font-black uppercase tracking-widest text-[#003B6E]/60">AI chose differently</span>
-                    </div>
-                    <span className="text-sm font-black text-[#00ADEF] tabular-nums">{100 - (mythGame?.aiMatchPercent || 0)}%</span>
-                  </div>
-                  <div className="h-3 bg-white rounded-full overflow-hidden border border-[#00ADEF]/10">
-                    <div className="h-full bg-[#00ADEF] rounded-full transition-all duration-1000 ease-out shadow-sm" style={{ width: `${100 - (mythGame?.aiMatchPercent || 0)}%` }} />
-                  </div>
-                </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="col-span-2 bg-white rounded-[1rem] border border-slate-200/60 p-8 flex flex-col items-center justify-center relative shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4">Total Booth Engagement</div>
+              <div className="text-[80px] font-extrabold text-slate-900 leading-none tracking-tighter tabular-nums">{statsData.totalPlayers}</div>
+              <div className="absolute top-8 right-8 flex items-center gap-2">
+                <span className="text-xs font-bold text-emerald-500">+14%</span>
+                <div className="w-1.5 h-6 bg-emerald-100 rounded-full" />
               </div>
             </div>
-          </div>
 
-          {/* MARKET SENTIMENT · VOICES OF TAKAFUL AI */}
-          <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50 shrink-0">MARKET SENTIMENT · VOICES OF TAKAFUL AI</h3>
-            <div className="flex-1 grid grid-cols-1 gap-4 overflow-hidden">
-              {interviewGame?.questionStats?.slice(0, 3).map((q, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-[#00ADEF]/10 p-5 shadow-sm space-y-3">
-                  <p className="text-xs font-bold text-[#003B6E] leading-relaxed">
-                    {q.text || "AI will eventually replace Takaful agents — True or False?"}
-                  </p>
-                  <div className="flex gap-4">
-                    <div className="flex-1 space-y-1">
-                      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-                        <span className="text-[#7BC242]">True</span>
-                        <span className="text-[#003B6E]">{Math.round((q.trueCount / (q.trueCount + q.falseCount || 1)) * 100)}%</span>
-                      </div>
-                      <div className="h-1.5 bg-[#F0F9FF] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#7BC242]" style={{ width: `${(q.trueCount / (q.trueCount + q.falseCount || 1)) * 100}%` }} />
-                      </div>
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-                        <span className="text-[#00ADEF]">False</span>
-                        <span className="text-[#003B6E]">{Math.round((q.falseCount / (q.trueCount + q.falseCount || 1)) * 100)}%</span>
-                      </div>
-                      <div className="h-1.5 bg-[#F0F9FF] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#00ADEF]" style={{ width: `${(q.falseCount / (q.trueCount + q.falseCount || 1)) * 100}%` }} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {(!interviewGame || interviewGame?.totalSubmissions === 0) && (
-                <div className="h-full bg-white border border-[#00ADEF]/10 rounded-3xl flex flex-col items-center justify-center text-[#003B6E]/20 font-black tracking-[0.3em] uppercase text-xs p-10 text-center">Waiting for Market Sentiment</div>
-              )}
+            <div className="bg-white border border-slate-200 p-8 rounded-xl shadow-sm text-center">
+              <div className="text-4xl font-extrabold text-emerald-600 mb-2">{mythGame?.aiMatchPercent || 0}%</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Aligned with AI</div>
+            </div>
+
+            <div className="bg-white border border-slate-200 p-8 rounded-xl shadow-sm text-center">
+              <div className="text-4xl font-extrabold text-blue-600 mb-2">{100 - (mythGame?.aiMatchPercent || 0)}%</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Independent Choice</div>
+            </div>
+
+            <div className="col-span-2 space-y-8 mt-4 bg-slate-50/50 p-8 rounded-[2rem] border border-dashed border-slate-200">
+              <ProgressBar label="Consensus Rate" value={mythGame?.aiMatchPercent || 0} color="bg-emerald-500" />
+              <ProgressBar label="Deviation Rate" value={100 - (mythGame?.aiMatchPercent || 0)} color="bg-blue-500" />
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN (Winners & Competition) */}
-        <div className="col-span-12 lg:col-span-6 flex flex-col gap-8">
+        {/* RIGHT COLUMN: COMPETITION */}
+        <div className="col-span-12 lg:col-span-6 flex flex-col gap-10">
 
-          {/* CROSSWORD CHALLENGE WINNERS */}
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50 shrink-0">CROSSWORD CHALLENGE WINNERS</h3>
-            <div className="bg-white rounded-3xl border border-[#00ADEF]/10 overflow-hidden shadow-xl shadow-[#003B6E]/5">
-              <div className="divide-y divide-[#F0F9FF]">
-                {lbCrossword.slice(0, 3).map((entry, i) => (
-                  <div key={i} className="p-6 flex items-center justify-between group hover:bg-[#F8FBFF] transition-colors">
-                    <div className="flex items-center gap-6">
-                      <div className="text-xl font-black text-[#003B6E]/10 w-6 text-center tabular-nums group-hover:text-[#00ADEF] transition-colors">{i + 1}</div>
-                      <div className="flex flex-col">
-                        <span className="text-xl font-black text-[#003B6E] group-hover:text-[#00ADEF] transition-colors leading-tight">{entry.name}</span>
-                        <span className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest">{entry.company}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-10">
-                      <div className="text-right">
-                        <span className="text-xs font-black text-[#00ADEF] tracking-widest tabular-nums block mb-1">
-                          {entry.duration ? 
-                            `${Math.floor(entry.duration / 60)}:${(entry.duration % 60).toString().padStart(2, '0')}` : 
-                            '--:--'
-                          }
-                        </span>
-                        <div className="text-2xl font-black text-[#003B6E] leading-none tabular-nums">
-                          {entry.score}<span className="text-[10px] opacity-20">%</span>
-                        </div>
-                      </div>
-                      <div className="w-8 flex justify-center">
-                        {entry.score === 100 ? (
-                          <span className="text-[#7BC242] text-2xl font-bold animate-in zoom-in duration-500">✓</span>
-                        ) : (
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#00ADEF]/20" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
+          <SectionHeader title="Leaderboard Matrix" subtitle="Elite performer classification" />
+
+          <div className="flex flex-col gap-6">
+            {/* CROSSWORD WINNERS */}
+            <div className="bg-white rounded-[1rem] border border-slate-200 overflow-hidden shadow-sm">
+              <div className="bg-slate-50 px-8 py-5 border-b border-slate-200 flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Crossword Protocol</span>
+                <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest leading-none">Top Performers</span>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {lbCrossword.slice(0, 4).map((entry, i) => (
+                  <LeaderboardRow key={i} rank={i + 1} entry={entry} type="score" />
                 ))}
-                {lbCrossword.length === 0 && (
-                  <div className="p-12 text-center text-[#003B6E]/20 font-black tracking-widest uppercase text-xs">Waiting for daily solvers</div>
-                )}
+                {lbCrossword.length === 0 && <EmptyState message="Syncing daily solvers..." />}
               </div>
             </div>
 
-            {/* COUNTDOWN */}
-            <div className="bg-[#F0F9FF] border border-[#00ADEF]/20 rounded-2xl p-6 flex items-center justify-between shadow-md transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#00ADEF] animate-pulse" />
-                <div className="flex flex-col">
-                  <div className="text-[#003B6E] font-black text-xs tracking-widest uppercase mb-1">Next prize draw in</div>
-                  {topCrosswordPlayer && (
-                    <div className="text-[10px] font-bold text-[#00ADEF] uppercase tracking-wider">
-                      Current Leader: <span className="text-[#003B6E]">{topCrosswordPlayer.name}</span> ({topCrosswordPlayer.company})
-                    </div>
-                  )}
+            {/* COUNTDOWN BANNER */}
+            <div className="bg-slate-900 rounded-xl p-8 flex items-center justify-between text-white shadow-lg overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[60px] rounded-full" />
+              <div className="flex items-center gap-6 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Next System Sync</div>
+                  <div className="text-sm font-bold text-white/80">Scheduled Prize Draw Matrix</div>
                 </div>
               </div>
-              <div className="text-4xl font-black text-[#00ADEF] tabular-nums tracking-tighter">
+              <div className="text-3xl font-extrabold tabular-nums text-white">
                 {getCountdown()}
               </div>
             </div>
-          </div>
 
-          {/* BEAT THE AI — TOP CHALLENGERS */}
-          <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-            <h3 className="text-[10px] font-black tracking-[0.2em] text-[#00ADEF] uppercase opacity-50 shrink-0">BEAT THE AI — TOP CHALLENGERS</h3>
-            <div className="flex-1 space-y-3 overflow-auto pr-2 custom-scrollbar">
-              {lbMyth.slice(0, 5).map((entry, i) => (
-                <div key={i} className="flex items-center gap-5 p-4 rounded-2xl bg-white border border-[#00ADEF]/10 group hover:border-[#00ADEF]/40 transition-all hover:shadow-lg shadow-sm shadow-[#003B6E]/5">
-                  <div className="text-3xl font-black text-[#003B6E]/10 w-8 text-center tabular-nums group-hover:text-[#00ADEF] transition-colors">{i + 1}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-black text-xl text-[#003B6E] leading-tight truncate">{entry.name}</div>
-                    <div className="text-[10px] font-bold text-[#003B6E]/30 uppercase tracking-widest truncate">{entry.company}</div>
-                    <div className="mt-2 flex gap-1">
-                      {[...Array(5)].map((_, j) => (
-                        <div key={j} className={`w-1.5 h-3.5 rounded-full ${j < (entry.score / 20) ? 'bg-[#7BC242]' : 'bg-[#F0F9FF]'}`} />
-                      ))}
+            {/* AI CHALLENGE */}
+            <div className="bg-white rounded-[1rem] border border-slate-200 overflow-hidden shadow-sm flex-1">
+              <div className="bg-slate-50 px-8 py-5 border-b border-slate-200">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Sales Accuracy Matrix</span>
+              </div>
+              <div className="p-8 space-y-4 max-h-[400px] overflow-auto custom-scrollbar">
+                {lbMyth.length > 0 ? lbMyth.slice(0, 5).map((entry, i) => (
+                  <div key={i} className="flex items-center gap-6 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
+                    <div className="text-2xl font-black text-slate-200 w-8 group-hover:text-blue-500 transition-colors">{i + 1}</div>
+                    <div className="flex-1">
+                      <div className="text-base font-bold text-slate-900">{entry.name}</div>
+                      <div className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">{entry.company}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-black text-slate-900">{entry.score / 10}<span className="text-[10px] opacity-20 whitespace-pre"> / 10</span></div>
+                      <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">Verified</div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-black text-[#003B6E] leading-none tabular-nums">{(entry.score / 10).toFixed(0)}<span className="text-[10px] opacity-20">/10</span></div>
-                    <div className="text-[9px] font-black text-[#003B6E]/30 uppercase tracking-[0.15em] mt-1 tabular-nums">Matched AI</div>
-                  </div>
-                </div>
-              ))}
-              {lbMyth.length === 0 && (
-                <div className="h-full bg-white border border-[#00ADEF]/10 rounded-3xl flex flex-col items-center justify-center text-[#003B6E]/20 font-black tracking-[0.3em] uppercase text-xs p-10 text-center">Waiting for challengers</div>
-              )}
+                )) : <EmptyState message="Waiting for challengers..." />}
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* 4. FOOTER BAR */}
-      <footer className="bg-[#00ADEF] py-4 px-8 flex items-center justify-between relative shadow-2xl z-20">
-        <div className="text-white font-black text-sm tracking-tight flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-white animate-pulse shadow-[0_0_10px_white]" />
-          Come join the challenge — the iorta TechNXT booth is waiting for you!
+      {/* 4. PROFESSIONAL FOOTER */}
+      <footer className="bg-white border-t border-slate-200 py-5 px-10 flex items-center justify-between z-50">
+        <div className="flex items-center gap-4">
+          <div className="px-3 py-1 bg-slate-900 rounded text-white text-[9px] font-black uppercase tracking-widest">Connect</div>
+          <span className="text-xs font-bold text-slate-500">Visit the iorta TechNXT booth to join the challenge!</span>
         </div>
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-5">
-            <span className="text-white font-black tracking-[0.15em] text-[10px] uppercase opacity-90">#SalesVerse</span>
-            <span className="text-white font-black tracking-[0.15em] text-[10px] uppercase opacity-90">#MTAxTIC</span>
+        <div className="flex items-center gap-10">
+          <div className="flex items-center gap-6">
+            {['SalesVerse', 'MTAxTIC', 'FutureScale'].map(tag => (
+              <span key={tag} className="text-[10px] font-black text-slate-300 uppercase tracking-widest whitespace-nowrap">#{tag}</span>
+            ))}
           </div>
-          <div className="h-4 w-px bg-white/30" />
-          <span className="text-white font-black text-[10px] tracking-widest uppercase">iortatechnxt.com</span>
+          <div className="h-5 w-px bg-slate-200" />
+          <span className="text-[10px] font-black text-slate-900 tracking-widest uppercase">iortatechnxt.com</span>
         </div>
       </footer>
 
@@ -420,22 +294,83 @@ export default function ScreenPage() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 45s linear infinite;
+          animation: marquee 50s linear infinite;
         }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #F0F9FF;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(0, 173, 239, 0.2);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(0, 173, 239, 0.4);
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
       `}</style>
+    </div>
+  )
+}
+
+function StatItem({ label, value, color }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-slate-400 text-[9px] uppercase font-black tracking-widest">{label}:</span>
+      <span className={`${color} font-black text-xs uppercase tracking-tight`}>{value}</span>
+    </div>
+  )
+}
+
+function SectionHeader({ title, subtitle }) {
+  return (
+    <div className="flex flex-col gap-1 border-l-4 border-slate-900 pl-5">
+      <h3 className="text-lg font-black tracking-tight text-slate-900 uppercase">{title}</h3>
+      <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">{subtitle}</p>
+    </div>
+  )
+}
+
+function LeaderboardRow({ rank, entry, type }) {
+  return (
+    <div className="px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+      <div className="flex items-center gap-6 text-slate-900">
+        <div className="w-4 text-sm font-black text-slate-300 tabular-nums">{rank}</div>
+        <div>
+          <div className="text-base font-bold leading-none mb-1">{entry.name}</div>
+          <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{entry.company}</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-8">
+        <div className="text-right">
+          <div className="text-xs font-black text-blue-500 tabular-nums mb-0.5">
+            {Math.floor(entry.duration / 60)}:{(entry.duration % 60).toString().padStart(2, '0')}
+          </div>
+          <div className="text-xl font-extrabold tabular-nums leading-none">
+            {entry.score}<span className="text-[10px] opacity-20 ml-1">%</span>
+          </div>
+        </div>
+        <div className="w-10 flex justify-center">
+          {entry.score === 100 ? (
+            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] font-bold">✓</div>
+          ) : (
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProgressBar({ label, value, color }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between items-end">
+        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{label}</span>
+        <span className={`text-sm font-extrabold tabular-nums ${color.replace('bg-', 'text-')}`}>{value}%</span>
+      </div>
+      <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+        <div className={`h-full ${color} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function EmptyState({ message }) {
+  return (
+    <div className="p-12 text-center text-slate-300 font-bold tracking-widest uppercase text-[10px]">
+      {message}
     </div>
   )
 }

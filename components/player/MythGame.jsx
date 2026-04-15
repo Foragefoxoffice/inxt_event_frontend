@@ -16,15 +16,18 @@ function Timer({ seconds, total }) {
   const urgent = seconds <= 10
   return (
     <div style={{
-      background: urgent ? 'rgba(239,68,68,0.08)' : 'rgba(0,173,239,0.08)',
-      border: `1px solid ${urgent ? 'rgba(239,68,68,0.2)' : 'rgba(0,173,239,0.2)'}`,
-      borderRadius: 8,
-      padding: '6px 14px',
-      fontFamily: "'Plus Jakarta Sans', sans-serif",
-      fontSize: 15, fontWeight: 900,
-      color: urgent ? '#EF4444' : '#00ADEF',
-      letterSpacing: '0.05em',
-      minWidth: 64, textAlign: 'center'
+      background: urgent ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0, 173, 239, 0.1)',
+      border: `1px solid ${urgent ? 'rgba(239, 68, 68, 0.3)' : 'rgba(0, 173, 239, 0.3)'}`,
+      backdropFilter: 'blur(8px)',
+      borderRadius: 12,
+      padding: '8px 16px',
+      fontFamily: "var(--font-outfit), sans-serif",
+      fontSize: 16, fontWeight: 800,
+      color: urgent ? '#F87171' : '#00ADEF',
+      letterSpacing: '0.02em',
+      minWidth: 80, textAlign: 'center',
+      boxShadow: urgent ? '0 0 20px rgba(239, 68, 68, 0.15)' : 'none',
+      transition: 'all 0.3s'
     }}>
       {String(Math.floor(seconds / 60)).padStart(2, '0')}:{String(seconds % 60).padStart(2, '0')}
     </div>
@@ -38,56 +41,61 @@ function OptionCard({ option, selected, onSelect, index }) {
     <button
       onClick={() => onSelect(option.optionId)}
       style={{
-        background: isSelected ? '#F0F9FF' : '#fff',
+        background: isSelected ? 'rgba(0, 173, 239, 0.05)' : '#fff',
         border: `2px solid ${isSelected ? '#00ADEF' : '#E2E8F0'}`,
-        borderRadius: 14,
-        padding: '20px',
+        borderRadius: 20,
+        padding: '24px',
         textAlign: 'left',
         cursor: 'pointer',
-        transition: 'all 0.2s',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         position: 'relative',
-        boxShadow: isSelected ? '0 8px 20px -4px rgba(0, 173, 239, 0.15)' : 'none',
-        animation: `mythFadeUp 0.35s ease both`,
-        animationDelay: `${index * 0.07}s`
+        boxShadow: isSelected ? '0 20px 25px -5px rgba(0, 173, 239, 0.1), 0 10px 10px -5px rgba(0, 173, 239, 0.04)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+        animation: `mythFadeUp 0.5s ease both`,
+        animationDelay: `${index * 0.1}s`,
+        transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+        overflow: 'hidden'
       }}
     >
       {isSelected && (
         <div style={{
-          position: 'absolute', top: 12, right: 12,
-          width: 22, height: 22, borderRadius: '50%',
+          position: 'absolute', top: 0, right: 0,
           background: '#00ADEF',
+          padding: '8px 16px',
+          borderBottomLeftRadius: 20,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 11, color: '#fff', fontWeight: 900
-        }}>✓</div>
+          fontSize: 11, color: '#fff', fontWeight: 900,
+          boxShadow: '-2px 2px 10px rgba(0, 173, 239, 0.2)'
+        }}>SELECTED</div>
       )}
       <div style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        fontSize: 10, fontWeight: 800,
-        letterSpacing: '0.18em', color: '#00ADEF',
-        textTransform: 'uppercase', marginBottom: 6
+        fontFamily: "var(--font-outfit), sans-serif",
+        fontSize: 11, fontWeight: 800,
+        letterSpacing: '0.15em', color: '#00ADEF',
+        textTransform: 'uppercase', marginBottom: 8
       }}>{option.label}</div>
       {option.shortLabel && (
         <div style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontSize: 16, fontWeight: 800, color: '#003B6E',
-          marginBottom: 10, lineHeight: 1.2
+          fontFamily: "var(--font-outfit), sans-serif",
+          fontSize: 20, fontWeight: 800, color: '#003B6E',
+          marginBottom: 12, lineHeight: 1.2,
+          letterSpacing: '-0.01em'
         }}>{option.shortLabel}</div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {rows.map((row, i) => {
           const [key, ...rest] = row.split(':')
           const val = rest.join(':').trim()
           return (
-            <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <span style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 11, color: '#64748B', lineHeight: 1.5,
+                fontFamily: "var(--font-outfit), sans-serif",
+                fontSize: 12, color: '#64748B',
                 minWidth: 0, flexShrink: 0,
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap', fontWeight: 500
               }}>{key}:</span>
               <span style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 11, color: '#003B6E', lineHeight: 1.5, fontWeight: 600
+                fontFamily: "var(--font-outfit), sans-serif",
+                fontSize: 12, color: '#003B6E', fontWeight: 700
               }}>{val}</span>
             </div>
           )
@@ -103,121 +111,145 @@ function RevealScreen({ question, playerOptionId, onNext, onSkipToResults, isLas
   const matched = playerOptionId && playerOpt?.isCorrect
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: matched ? '#F0FDF8' : '#FFF8F0', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: matched ? '#F0FDF4' : '#FFF7ED', fontFamily: "var(--font-outfit), sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        @keyframes mythPop { 0% { opacity:0; transform: scale(0.85); } 60% { transform: scale(1.04); } 100% { opacity:1; transform: scale(1); } }
-        @keyframes mythFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mythPop { 0% { opacity:0; transform: scale(0.9); } 60% { transform: scale(1.05); } 100% { opacity:1; transform: scale(1); } }
+        @keyframes mythFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
       {/* Top bar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #E2E8F0', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #E2E8F0', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', sticky: 'top', zIndex: 10 }}>
         <div>
-          <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase' }}>
-            BEAT THE AI · REVEAL
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase' }}>
+            BEAT THE AI · VERDICT
           </div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#003B6E', marginTop: 2 }}>
-            Scenario {questionIndex + 1} — {question.scenarioTitle || question.text.slice(0, 32)}
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#003B6E', marginTop: 2 }}>
+            Scenario {questionIndex + 1} <span style={{ color: '#E2E8F0', margin: '0 8px' }}>|</span> {question.scenarioTitle || question.text.slice(0, 32)}
           </div>
         </div>
         {question.sectionLabel && (
-          <div style={{ background: 'rgba(0,173,239,0.08)', border: '1px solid rgba(0,173,239,0.15)', borderRadius: 6, padding: '4px 10px', fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', color: '#00ADEF', textTransform: 'uppercase' }}>
+          <div style={{ background: 'rgba(0, 173, 239, 0.1)', border: '1px solid rgba(0, 173, 239, 0.2)', borderRadius: 8, padding: '6px 14px', fontSize: 10, fontWeight: 800, letterSpacing: '0.1em', color: '#00ADEF', textTransform: 'uppercase' }}>
             {question.sectionLabel}
           </div>
         )}
       </div>
 
-      <div style={{ flex: 1, padding: '20px 20px 28px', maxWidth: 680, margin: '0 auto', width: '100%' }}>
+      <div style={{ flex: 1, padding: '40px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
 
-        {/* Verdict */}
-        <div style={{ textAlign: 'center', padding: '24px 0 20px', animation: 'mythPop 0.45s ease both' }}>
+        {/* Verdict Badge */}
+        <div style={{ textAlign: 'center', marginBottom: 48, animation: 'mythPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both' }}>
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10,
-            background: matched ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.1)',
-            border: `1.5px solid ${matched ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.25)'}`,
-            borderRadius: 50, padding: '10px 22px'
+            display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 12,
+            background: matched ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.08)',
+            border: `1.5px solid ${matched ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.15)'}`,
+            borderRadius: 32, padding: '32px 48px',
+            boxShadow: matched ? '0 20px 40px -10px rgba(34, 197, 94, 0.2)' : '0 20px 40px -10px rgba(239, 68, 68, 0.15)'
           }}>
-            <span style={{ fontSize: 22 }}>{matched ? '✓' : '✗'}</span>
-            <span style={{ fontSize: 15, fontWeight: 900, letterSpacing: '0.12em', color: matched ? '#059669' : '#DC2626', textTransform: 'uppercase' }}>
-              {matched ? 'You Matched the AI!' : 'AI Thinks Differently'}
+            <div style={{
+              width: 64, height: 64, borderRadius: '50%',
+              background: matched ? '#22C55E' : '#EF4444',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 32, color: '#fff', fontWeight: 900,
+              marginBottom: 8,
+              boxShadow: '0 10px 20px -5px rgba(0,0,0,0.2)'
+            }}>{matched ? '✓' : '✗'}</div>
+            <span style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.02em', color: matched ? '#166534' : '#991B1B' }}>
+              {matched ? 'Perfect Match!' : 'AI Analysis Differs'}
             </span>
+            <p style={{ fontSize: 14, color: matched ? '#166534' : '#991B1B', opacity: 0.8, margin: 0, fontWeight: 500 }}>
+              {matched ? "You're thinking exactly like our expert AI." : "The AI identified a more optimal path for this session."}
+            </p>
           </div>
         </div>
 
-        {/* Choice comparison — names only, no badge text */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16, animation: 'mythFadeUp 0.4s ease 0.1s both' }}>
+        {/* Choice comparison */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 24, animation: 'mythFadeUp 0.5s ease 0.2s both' }}>
           {/* Player */}
           <div style={{
             background: '#fff',
-            border: `1.5px solid ${matched ? 'rgba(16,185,129,0.4)' : '#E2E8F0'}`,
-            borderRadius: 14, padding: '18px 20px'
+            border: `2px solid ${matched ? '#22C55E' : '#E2E8F0'}`,
+            borderRadius: 24, padding: '24px',
+            boxShadow: '0 10px 30px -10px rgba(0,0,0,0.05)'
           }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 6 }}>Your Choice</div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: matched ? '#059669' : '#64748B', lineHeight: 1.3 }}>
-              {playerOpt ? playerOpt.label : 'No answer'}
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.15em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 12 }}>Your Decision</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: matched ? '#166534' : '#64748B', lineHeight: 1.4 }}>
+              {playerOpt ? playerOpt.label : 'No response provided'}
             </div>
             {playerOpt?.shortLabel && (
-              <div style={{ fontSize: 15, fontWeight: 900, color: '#003B6E', marginTop: 4 }}>{playerOpt.shortLabel}</div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: '#003B6E', marginTop: 8 }}>{playerOpt.shortLabel}</div>
             )}
           </div>
 
           {/* AI */}
           <div style={{
             background: '#fff',
-            border: '1.5px solid #00ADEF',
-            borderRadius: 14, padding: '18px 20px'
+            border: '2px solid #00ADEF',
+            borderRadius: 24, padding: '24px',
+            boxShadow: '0 15px 35px -10px rgba(0, 173, 239, 0.15)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 6 }}>AI's Choice · SalesVerse</div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#00ADEF', lineHeight: 1.3 }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, background: '#00ADEF', color: '#fff', fontSize: 9, fontWeight: 900, padding: '6px 16px', borderBottomLeftRadius: 16 }}>AI PREFERENCE</div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.15em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 12 }}>SalesVerse Choice</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#00ADEF', lineHeight: 1.4 }}>
               {aiOpt ? aiOpt.label : '—'}
             </div>
             {aiOpt?.shortLabel && (
-              <div style={{ fontSize: 15, fontWeight: 900, color: '#003B6E', marginTop: 4 }}>{aiOpt.shortLabel}</div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: '#003B6E', marginTop: 8 }}>{aiOpt.shortLabel}</div>
             )}
-            <div style={{ fontSize: 11, color: '#00ADEF', fontStyle: 'italic', marginTop: 8 }}>« Correct — AI agrees. »</div>
           </div>
         </div>
 
-        {/* AI insight — one clean paragraph */}
+        {/* AI insight */}
         {question.aiRationale && (
           <div style={{
-            background: '#fff', borderRadius: 12, padding: '16px 20px', marginBottom: 20,
-            borderLeft: `4px solid ${matched ? '#10B981' : '#00ADEF'}`,
-            animation: 'mythFadeUp 0.4s ease 0.15s both'
+            background: 'linear-gradient(135deg, #003B6E 0%, #001A33 100%)',
+            borderRadius: 24, padding: '32px', marginBottom: 32,
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 20px 50px -15px rgba(0, 59, 110, 0.4)',
+            animation: 'mythFadeUp 0.5s ease 0.3s both'
           }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.18em', color: matched ? '#10B981' : '#00ADEF', textTransform: 'uppercase', marginBottom: 6 }}>
-              Why the AI chose this
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(0, 173, 239, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 16 }}>💡</span>
+              </div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', color: '#00ADEF', textTransform: 'uppercase' }}>
+                Strategy Insight
+              </div>
             </div>
-            <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.9)', lineHeight: 1.7, margin: 0, fontWeight: 400 }}>
               {question.aiRationale}
             </p>
           </div>
         )}
 
-
         {/* Navigation */}
-        <div style={{ display: 'grid', gridTemplateColumns: isLast ? '1fr' : '1fr 1fr', gap: 10, animation: 'mythFadeUp 0.4s ease 0.25s both' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isLast ? '1fr' : '1fr 1fr', gap: 16, animation: 'mythFadeUp 0.5s ease 0.4s both' }}>
           {isLast ? (
             <button onClick={onNext} style={{
-              padding: '16px', borderRadius: 12, border: 'none',
+              padding: '20px', borderRadius: 16, border: 'none',
               background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 900,
-              letterSpacing: '0.15em', color: '#fff', cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(0,173,239,0.25)'
-            }}>SEE MY RESULTS →</button>
+              fontFamily: "var(--font-outfit), sans-serif", fontSize: 16, fontWeight: 800,
+              letterSpacing: '0.1em', color: '#fff', cursor: 'pointer',
+              boxShadow: '0 15px 35px -10px rgba(0, 173, 239, 0.4)',
+              transition: 'all 0.3s'
+            }}>COMPLETE CHALLENGE →</button>
           ) : (
             <>
               <button onClick={onNext} style={{
-                padding: '15px', borderRadius: 12, border: '1.5px solid #E2E8F0',
-                background: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 12, fontWeight: 800, letterSpacing: '0.15em', color: '#003B6E', cursor: 'pointer'
+                padding: '18px', borderRadius: 16, border: '2px solid #E2E8F0',
+                background: '#fff', fontFamily: "var(--font-outfit), sans-serif",
+                fontSize: 14, fontWeight: 800, letterSpacing: '0.05em', color: '#003B6E', cursor: 'pointer',
+                transition: 'all 0.3s'
               }}>NEXT SCENARIO →</button>
               <button onClick={onSkipToResults} style={{
-                padding: '15px', borderRadius: 12, border: 'none',
-                background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-                fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 800,
-                letterSpacing: '0.15em', color: '#fff', cursor: 'pointer'
-              }}>SEE MY RESULTS →</button>
+                padding: '18px', borderRadius: 16, border: 'none',
+                background: 'linear-gradient(135deg, #00ADEF 00%, #003B6E 100%)',
+                fontFamily: "var(--font-outfit), sans-serif", fontSize: 14, fontWeight: 800,
+                letterSpacing: '0.05em', color: '#fff', cursor: 'pointer',
+                boxShadow: '0 10px 25px -5px rgba(0, 173, 239, 0.3)',
+                transition: 'all 0.3s'
+              }}>FINISH & SEE RESULTS</button>
             </>
           )}
         </div>
@@ -266,101 +298,130 @@ function PreviewScreen({ questions, onBack, onStartFrom }) {
   const [expandedIdx, setExpandedIdx] = useState(null)
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F0F9FF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'radial-gradient(circle at top right, #F0F9FF 0%, #E0F2FE 100%)', fontFamily: "var(--font-outfit), sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         @keyframes mythFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-        .preview-row:hover { background: #f8fafc !important; }
+        .preview-row:hover { background: #f8fafc !important; transform: translateX(4px); }
+        .preview-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
       `}</style>
 
       {/* Header */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #E2E8F0', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #E2E8F0', padding: '24px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', sticky: 'top', zIndex: 10 }}>
         <div>
           <button
             onClick={onBack}
-            style={{ background: 'none', border: 'none', color: '#00ADEF', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 800, letterSpacing: '0.1em', marginBottom: 4, padding: 0 }}
+            style={{
+              background: 'rgba(0, 173, 239, 0.05)', border: '1px solid rgba(0, 173, 239, 0.1)',
+              color: '#00ADEF', cursor: 'pointer', fontFamily: "var(--font-outfit), sans-serif",
+              fontSize: 12, fontWeight: 800, letterSpacing: '0.1em', marginBottom: 8,
+              padding: '6px 16px', borderRadius: 8, transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,173,239,0.1)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,173,239,0.05)'}
           >← BACK TO LOBBY</button>
-          <div style={{ fontSize: 20, fontWeight: 900, color: '#003B6E', marginTop: 2 }}>All Scenarios</div>
+          <div style={{ fontSize: 24, fontWeight: 900, color: '#003B6E', letterSpacing: '-0.02em' }}>Scenario Explorer</div>
         </div>
         <div style={{
-          fontSize: 11, fontWeight: 800, letterSpacing: '0.15em',
-          color: '#64748B', textTransform: 'uppercase'
-        }}>{questions.length} SCENARIOS</div>
+          fontSize: 14, fontWeight: 800, letterSpacing: '0.1em',
+          color: '#64748B', textTransform: 'uppercase',
+          background: '#fff', padding: '8px 20px', borderRadius: 12, border: '1px solid #E2E8F0'
+        }}>{questions.length} TOTAL SCENARIOS</div>
       </div>
 
       {/* Scenario list */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px 32px', maxWidth: 820, margin: '0 auto', width: '100%' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: '32px 24px 60px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
 
-        <p style={{ fontSize: 12, color: '#64748B', marginBottom: 20, lineHeight: 1.6 }}>
-          Tap a scenario to preview its options. Use "Start from here" to begin the timed challenge from any scenario.
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {questions.map((q, i) => {
             const isOpen = expandedIdx === i
             return (
-              <div key={i} style={{ borderRadius: 16, overflow: 'hidden', border: isOpen ? '1px solid #00ADEF' : '1px solid #E2E8F0', background: '#fff', transition: 'border-color 0.2s' }}>
+              <div key={i} className="preview-card" style={{
+                borderRadius: 24, overflow: 'hidden',
+                border: isOpen ? '2px solid #00ADEF' : '1px solid #E2E8F0',
+                background: '#fff',
+                boxShadow: isOpen ? '0 20px 40px -10px rgba(0, 173, 239, 0.15)' : '0 4px 6px -1px rgba(0,0,0,0.02)'
+              }}>
                 {/* Row header */}
                 <button
                   className="preview-row"
                   onClick={() => setExpandedIdx(isOpen ? null : i)}
                   style={{
-                    width: '100%', background: isOpen ? '#F0F9FF' : '#fff',
+                    width: '100%', background: isOpen ? 'linear-gradient(to right, #F0F9FF, #fff)' : '#fff',
                     border: 'none', cursor: 'pointer',
-                    padding: '16px 20px',
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    textAlign: 'left', transition: 'background 0.15s'
+                    padding: '24px 28px',
+                    display: 'flex', alignItems: 'center', gap: 20,
+                    textAlign: 'left', transition: 'all 0.3s'
                   }}
                 >
                   <div style={{
-                    width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                    width: 44, height: 44, borderRadius: 16, flexShrink: 0,
                     background: isOpen ? '#00ADEF' : '#F1F5F9',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: 12, fontWeight: 900,
-                    color: isOpen ? '#fff' : '#003B6E'
+                    fontFamily: "var(--font-outfit), sans-serif",
+                    fontSize: 18, fontWeight: 900,
+                    color: isOpen ? '#fff' : '#003B6E',
+                    boxShadow: isOpen ? '0 10px 15px -3px rgba(0, 173, 239, 0.3)' : 'none',
+                    transition: 'all 0.3s'
                   }}>{i + 1}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.15em', color: isOpen ? '#00ADEF' : '#64748B', textTransform: 'uppercase', marginBottom: 2 }}>
-                      {q.sectionLabel || 'SCENARIO'}
+                    <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', color: isOpen ? '#00ADEF' : '#94A3B8', textTransform: 'uppercase', marginBottom: 4 }}>
+                      {q.sectionLabel || 'Sales Strategy Scenario'}
                     </div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#003B6E', lineHeight: 1.3 }}>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: '#003B6E', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
                       {q.scenarioTitle || `Scenario ${i + 1}`}
                     </div>
                   </div>
-                  <div style={{ fontSize: 16, color: isOpen ? '#00ADEF' : '#CBD5E1', transition: 'transform 0.2s, color 0.2s', transform: isOpen ? 'rotate(180deg)' : 'none' }}>
-                    ▾
+                  <div style={{
+                    width: 32, height: 32, borderRadius: '50%', background: isOpen ? 'rgba(0,173,239,0.1)' : '#F8FAFC',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, color: isOpen ? '#00ADEF' : '#CBD5E1',
+                    transition: 'all 0.3s',
+                    transform: isOpen ? 'rotate(180deg)' : 'none'
+                  }}>
+                    ▼
                   </div>
                 </button>
 
                 {/* Expanded content */}
                 {isOpen && (
-                  <div style={{ padding: '0 20px 20px', borderTop: '1px solid #E2E8F0', background: '#fff' }}>
-                    {/* Question text */}
-                    <p style={{ fontSize: 15, fontWeight: 600, color: '#003B6E', margin: '16px 0 14px', lineHeight: 1.5 }}>
-                      {q.text}
-                    </p>
+                  <div style={{ padding: '0 28px 28px', background: '#fff' }}>
+                    <div style={{ height: 1, background: '#F1F5F9', marginBottom: 24 }} />
+
+                    <div style={{ marginBottom: 24 }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 12 }}>Case Context</div>
+                      <p style={{ fontSize: 18, fontWeight: 600, color: '#003B6E', margin: 0, lineHeight: 1.6 }}>
+                        {q.text}
+                      </p>
+                    </div>
 
                     {/* Options */}
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, marginBottom: 32 }}>
                       {q.options.map((opt, oi) => (
-                        <PreviewOptionCard key={oi} option={opt} />
+                        <div key={oi} style={{ background: '#F8FAFC', borderRadius: 16, padding: '16px 20px', border: '1px solid #F1F5F9' }}>
+                          <div style={{ fontSize: 10, fontWeight: 800, color: '#00ADEF', textTransform: 'uppercase', marginBottom: 4 }}>Option {String.fromCharCode(65 + oi)}</div>
+                          <div style={{ fontSize: 15, fontWeight: 800, color: '#003B6E', marginBottom: 4 }}>{opt.shortLabel}</div>
+                          <div style={{ fontSize: 13, color: '#64748B' }}>{opt.label}</div>
+                        </div>
                       ))}
                     </div>
 
                     {/* Start from here CTA */}
-                    <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <button
                         onClick={() => onStartFrom(i)}
                         style={{
                           background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-                          border: 'none', borderRadius: 10,
-                          padding: '10px 20px',
-                          fontFamily: "'Plus Jakarta Sans', sans-serif",
-                          fontSize: 11, fontWeight: 900, letterSpacing: '0.15em',
-                          color: '#fff', cursor: 'pointer'
+                          border: 'none', borderRadius: 14,
+                          padding: '14px 28px',
+                          fontFamily: "var(--font-outfit), sans-serif",
+                          fontSize: 13, fontWeight: 800, letterSpacing: '0.05em',
+                          color: '#fff', cursor: 'pointer',
+                          boxShadow: '0 10px 20px -5px rgba(0, 173, 239, 0.3)',
+                          transition: 'all 0.2s'
                         }}
-                      >START FROM SCENARIO {i + 1} →</button>
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                      >START FROM THIS SCENARIO →</button>
                     </div>
                   </div>
                 )}
@@ -370,44 +431,55 @@ function PreviewScreen({ questions, onBack, onStartFrom }) {
         </div>
 
         {/* Bottom CTA */}
-        <div style={{ marginTop: 28, display: 'flex', gap: 12 }}>
+        <div style={{ marginTop: 48, display: 'flex', gap: 16 }}>
           <button
             onClick={onBack}
             style={{
-              flex: 1, padding: '16px', borderRadius: 12,
-              border: '1.5px solid #E2E8F0',
+              flex: 1, padding: '20px', borderRadius: 18,
+              border: '2px solid #E2E8F0',
               background: '#fff',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 12, fontWeight: 800, letterSpacing: '0.15em',
-              color: '#64748B', cursor: 'pointer'
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontSize: 14, fontWeight: 800, letterSpacing: '0.1em',
+              color: '#64748B', cursor: 'pointer',
+              transition: 'all 0.2s'
             }}
-          >← BACK TO LOBBY</button>
+          >CANCEL</button>
           <button
             onClick={() => onStartFrom(0)}
             style={{
-              flex: 2, padding: '16px', borderRadius: 12,
+              flex: 2, padding: '20px', borderRadius: 18,
               background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
               border: 'none',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 13, fontWeight: 900, letterSpacing: '0.18em',
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontSize: 15, fontWeight: 900, letterSpacing: '0.1em',
               color: '#fff', cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(0,173,239,0.2)'
+              boxShadow: '0 15px 35px -10px rgba(0, 173, 239, 0.4)',
+              transition: 'all 0.2s'
             }}
-          >I'M READY — START ALL SCENARIOS →</button>
+          >START FULL CHALLENGE →</button>
         </div>
 
       </div>
 
-      <div style={{ height: 4, background: 'linear-gradient(90deg, #06d17f 0%, #C4962A 100%)' }} />
+      <div style={{ height: 6, background: 'linear-gradient(90deg, #00ADEF, #7BC242)' }} />
     </div>
   )
 }
 
-function StatPill({ value, label, color }) {
+function StatPill({ value, label, color, icon }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: '#64748B', textTransform: 'uppercase', marginTop: 4 }}>{label}</div>
+    <div style={{
+      textAlign: 'center',
+      background: 'rgba(255, 255, 255, 0.03)',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      borderRadius: 24,
+      padding: '20px 32px',
+      minWidth: 160,
+      boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+    }}>
+      <div style={{ fontFamily: "var(--font-outfit), sans-serif", fontSize: 32, fontWeight: 900, color, lineHeight: 1, letterSpacing: '-0.02em', marginBottom: 8 }}>{value}</div>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255, 255, 255, 0.5)', textTransform: 'uppercase' }}>{label}</div>
     </div>
   )
 }
@@ -431,7 +503,7 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
         matchedPct,
         surprisedPct: 100 - matchedPct
       })
-    }).catch(() => {})
+    }).catch(() => { })
   }, [step, currentIdx])
 
   // Timer management
@@ -489,111 +561,169 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
   // ── INTRO SCREEN ─────────────────────────────────────────────────────────
   if (step === 'intro') {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F0F9FF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'radial-gradient(circle at top right, #003B6E 0%, #001A33 100%)',
+        fontFamily: "var(--font-outfit), sans-serif",
+        color: '#fff',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Animated background glows */}
+        <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(0, 173, 239, 0.15) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0 }} />
+        <div style={{ position: 'absolute', bottom: '-5%', left: '-5%', width: '30%', height: '30%', background: 'radial-gradient(circle, rgba(123, 194, 66, 0.1) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0 }} />
+
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-          @keyframes mythFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-          .myth-pill:hover { border-color: #00ADEF !important; color: #00ADEF !important; }
+          @keyframes mythFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes glowPulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+          .myth-pill:hover { background: rgba(255, 255, 255, 0.1) !important; transform: translateY(-2px); }
+          .start-btn:hover { transform: scale(1.03) translateY(-2px); box-shadow: 0 20px 40px rgba(0, 173, 239, 0.4); }
+          .start-btn:active { transform: scale(0.98); }
         `}</style>
 
         {/* Brand Bar */}
-        <div style={{ height: 4, background: 'linear-gradient(90deg, #00ADEF 0%, #003B6E 100%)' }} />
+        <div style={{ height: 6, background: 'linear-gradient(90deg, #00ADEF, #7BC242, #00ADEF)', backgroundSize: '200% auto', animation: 'glowPulse 3s infinite linear' }} />
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', zIndex: 1, position: 'relative' }}>
 
           {/* Brand line */}
-          <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 32, animation: 'mythFadeUp 0.4s ease both' }}>
-            iorta TechNXT · SalesVerse · 2026
+          <div style={{
+            fontSize: 12, fontWeight: 800, letterSpacing: '0.4em', color: '#00ADEF',
+            textTransform: 'uppercase', marginBottom: 40, animation: 'mythFadeUp 0.6s ease both'
+          }}>
+            IORTA TECHNXT <span style={{ color: 'rgba(255,255,255,0.2)', margin: '0 12px' }}>·</span> SALESVERSE 2026
           </div>
 
           {/* Hero headline */}
-          <div style={{ animation: 'mythFadeUp 0.4s ease 0.05s both', marginBottom: 8 }}>
-            <div style={{ fontSize: 'clamp(52px, 12vw, 88px)', fontWeight: 900, color: '#003B6E', lineHeight: 0.95, letterSpacing: '-0.02em' }}>
-              CAN YOU
-            </div>
-            <div style={{ fontSize: 'clamp(52px, 12vw, 88px)', fontWeight: 900, color: '#00ADEF', lineHeight: 0.95, letterSpacing: '-0.02em' }}>
-              OUTSMART AI?
-            </div>
+          <div style={{ animation: 'mythFadeUp 0.6s ease 0.1s both', marginBottom: 32 }}>
+            <h1 style={{
+              fontSize: 'clamp(48px, 12vw, 80px)', fontWeight: 900, lineHeight: 0.9,
+              letterSpacing: '-0.04em', margin: 0, textTransform: 'uppercase'
+            }}>
+              CAN YOU<br />
+              <span style={{
+                background: 'linear-gradient(to right, #00ADEF, #7BC242)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'inline-block',
+                marginTop: 8
+              }}>OUTSMART AI?</span>
+            </h1>
           </div>
 
-          {/* Sub */}
-          <div style={{ animation: 'mythFadeUp 0.4s ease 0.1s both', marginBottom: 4 }}>
-            <p style={{ fontSize: 16, color: '#64748B', margin: '16px 0 4px', fontWeight: 500 }}>
-              30-second Takaful sales challenge — powered by SalesVerse
+          {/* Description Card */}
+          <div style={{
+            animation: 'mythFadeUp 0.6s ease 0.2s both',
+            marginBottom: 48,
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 20,
+            padding: '24px 40px',
+            maxWidth: 600
+          }}>
+            <p style={{ fontSize: 20, color: 'rgba(255, 255, 255, 0.9)', margin: '0 0 12px', fontWeight: 500, lineHeight: 1.4 }}>
+              Test your strategy in the 30-second Takaful sales challenge.
             </p>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', color: '#00ADEF', textTransform: 'uppercase', margin: 0 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 12,
+              fontSize: 12, fontWeight: 800, letterSpacing: '0.2em', color: '#7BC242', textTransform: 'uppercase'
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#7BC242', boxShadow: '0 0 10px #7BC242' }} />
               {questions.length} SCENARIOS · NEW CHALLENGE EVERY ROUND
-            </p>
+            </div>
           </div>
 
-          {/* Scenario pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, maxWidth: 680, margin: '28px auto', animation: 'mythFadeUp 0.4s ease 0.15s both' }}>
+          {/* Scenario Selection Grid */}
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10,
+            maxWidth: 800, margin: '0 auto 56px', animation: 'mythFadeUp 0.6s ease 0.3s both'
+          }}>
             {questions.map((q, i) => {
               const isActive = i === startFromIdx
               return (
                 <button
                   key={i}
                   onClick={() => setStartFromIdx(i)}
+                  className="myth-pill"
                   style={{
-                    border: isActive ? '1.5px solid #00ADEF' : '1px solid #E2E8F0',
-                    borderRadius: 20,
-                    padding: '6px 14px',
-                    fontSize: 12, fontWeight: 700,
-                    color: isActive ? '#00ADEF' : '#64748B',
-                    background: isActive ? '#fff' : 'transparent',
-                    boxShadow: isActive ? '0 4px 12px rgba(0,173,239,0.1)' : 'none',
-                    transition: 'all 0.15s',
+                    background: isActive ? '#00ADEF' : 'rgba(255, 255, 255, 0.05)',
+                    border: isActive ? '1px solid #00ADEF' : '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: 16,
+                    padding: '10px 18px',
+                    fontSize: 13, fontWeight: 700,
+                    color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.6)',
+                    boxShadow: isActive ? '0 10px 20px rgba(0, 173, 239, 0.3)' : 'none',
+                    transition: 'all 0.3s',
                     cursor: 'pointer',
-                    fontFamily: "'Plus Jakarta Sans', sans-serif"
+                    fontFamily: "var(--font-outfit), sans-serif",
+                    display: 'flex', alignItems: 'center', gap: 10
                   }}
-                >{i + 1}. {q.scenarioTitle || `Scenario ${i + 1}`}</button>
+                >
+                  <span style={{ opacity: isActive ? 1 : 0.4 }}>{String(i + 1).padStart(2, '0')}</span>
+                  {q.scenarioTitle || `Scenario ${i + 1}`}
+                </button>
               )
             })}
           </div>
 
-          {/* CTAs */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, animation: 'mythFadeUp 0.4s ease 0.2s both' }}>
+          {/* Primary Action */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, animation: 'mythFadeUp 0.6s ease 0.4s both' }}>
             <button
               onClick={() => { setCurrentIdx(startFromIdx); setStep('question') }}
+              className="start-btn"
               style={{
                 background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
-                border: 'none', borderRadius: 12,
-                padding: '18px 60px',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 15, fontWeight: 900,
-                letterSpacing: '0.18em', color: '#fff',
+                border: 'none', borderRadius: 20,
+                padding: '24px 80px',
+                fontFamily: "var(--font-outfit), sans-serif",
+                fontSize: 18, fontWeight: 900,
+                letterSpacing: '0.1em', color: '#fff',
                 cursor: 'pointer',
-                boxShadow: '0 8px 32px rgba(0,173,239,0.3)',
-                transition: 'transform 0.15s', minWidth: 280
+                boxShadow: '0 20px 40px rgba(0, 173, 239, 0.3)',
+                transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                minWidth: 320,
+                textTransform: 'uppercase'
               }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            >{startFromIdx === 0 ? 'TAP TO START' : `START FROM SCENARIO ${startFromIdx + 1}`}</button>
+            >
+              {startFromIdx === 0 ? 'Initialize Challenge' : `Start from Scenario ${startFromIdx + 1}`}
+            </button>
 
             <button
               onClick={() => setStep('preview')}
               style={{
-                background: '#fff',
-                border: '1px solid #E2E8F0',
-                borderRadius: 12, padding: '12px 32px',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 12, fontWeight: 700,
-                letterSpacing: '0.15em', color: '#003B6E',
-                cursor: 'pointer', transition: 'all 0.15s', minWidth: 280
+                background: 'transparent',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: 20, padding: '16px 40px',
+                fontFamily: "var(--font-outfit), sans-serif",
+                fontSize: 14, fontWeight: 700,
+                letterSpacing: '0.1em', color: 'rgba(255, 255, 255, 0.8)',
+                cursor: 'pointer', transition: 'all 0.3s', minWidth: 240,
+                backdropFilter: 'blur(10px)'
               }}
-            >PREVIEW ALL SCENARIOS</button>
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#00ADEF'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)' }}
+            >EXPLORE ALL SCENARIOS</button>
           </div>
         </div>
 
-        {/* Bottom stats */}
-        <div style={{ borderTop: '1px solid #E2E8F0', padding: '20px', display: 'flex', justifyContent: 'center', gap: 48, background: '#fff' }}>
-          <StatPill value={stats?.totalPlayers ?? '—'} label="Played Today" color="#003B6E" />
-          <StatPill value={stats ? `${stats.matchedPct}%` : '—%'} label="Matched AI" color="#10B981" />
-          <StatPill value={stats ? `${stats.surprisedPct}%` : '—%'} label="Were Surprised" color="#F87171" />
+        {/* Global Insights Section */}
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.2)',
+          backdropFilter: 'blur(20px)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '40px 20px',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 32,
+          flexWrap: 'wrap'
+        }}>
+          <StatPill value={stats?.totalPlayers ?? '0'} label="Simulations Run" color="#fff" />
+          <StatPill value={stats ? `${stats.matchedPct}%` : '0%'} label="AI Alignment" color="#7BC242" />
+          <StatPill value={stats ? `${stats.surprisedPct}%` : '0%'} label="Insights Gained" color="#00ADEF" />
         </div>
-
-        {/* Brand bottom bar */}
-        <div style={{ height: 4, background: 'linear-gradient(90deg, #00ADEF 0%, #003B6E 100%)' }} />
       </div>
     )
   }
@@ -630,97 +760,124 @@ export function MythGame({ questions, onSubmit, submitting, eventId }) {
 
   // ── QUESTION SCREEN ────────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F0F9FF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'radial-gradient(circle at top right, #F0F9FF 0%, #E0F2FE 100%)', fontFamily: "var(--font-outfit), sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        @keyframes mythFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mythFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes progressAnimation { from { width: 0%; } to { width: 100%; } }
       `}</style>
 
-      {/* Gold top bar */}
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #00ADEF 0%, #7BC242 100%)' }} />
+      {/* Progress bar */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 4, background: 'rgba(0,0,0,0.05)', zIndex: 100 }}>
+        <div style={{
+          height: '100%',
+          background: 'linear-gradient(90deg, #00ADEF, #7BC242)',
+          width: `${((currentIdx + 1) / questions.length) * 100}%`,
+          transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: '0 0 10px rgba(0, 173, 239, 0.5)'
+        }} />
+      </div>
 
       {/* Header */}
-      <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #E2E8F0', padding: '14px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+      <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #E2E8F0', padding: '20px 32px', marginTop: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 2 }}>
-              SALESVERSE — BEAT THE AI
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <div style={{ background: '#003B6E', color: '#fff', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 20, letterSpacing: '0.1em' }}>
+                SCENARIO {currentIdx + 1} / {questions.length}
+              </div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase' }}>
+                SALESVERSE STRATEGY ENGINE
+              </div>
             </div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#003B6E', marginBottom: 8 }}>
-              Scenario {currentIdx + 1} of {questions.length} — {q?.scenarioTitle || ''}
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#003B6E', letterSpacing: '-0.01em' }}>
+              {q?.scenarioTitle || 'Customer Interaction'}
             </div>
-            {q?.sectionLabel && (
-              <div style={{
-                display: 'inline-block',
-                background: 'rgba(0,173,239,0.08)',
-                border: '1px solid rgba(0,173,239,0.1)',
-                borderRadius: 4, padding: '3px 10px',
-                fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
-                color: '#00ADEF', textTransform: 'uppercase'
-              }}>{q.sectionLabel}</div>
-            )}
           </div>
           <Timer seconds={timeLeft} total={TIMER_SECONDS} />
         </div>
       </div>
 
-      {/* Question */}
-      <div style={{ flex: 1, padding: '28px 20px 100px', maxWidth: 860, margin: '0 auto', width: '100%' }} key={currentIdx}>
+      {/* Main Content */}
+      <div style={{ flex: 1, padding: '48px 24px 140px', maxWidth: 1000, margin: '0 auto', width: '100%' }} key={currentIdx}>
 
-        <div style={{ textAlign: 'center', marginBottom: 28, animation: 'mythFadeUp 0.35s ease both' }}>
-          <p style={{ fontSize: 18, fontWeight: 600, color: '#003B6E', margin: '0 0 6px', lineHeight: 1.5 }}>
-            {q?.text.split('.')[0]}.
-          </p>
-          <p style={{ fontSize: 20, fontWeight: 900, color: '#00ADEF', margin: 0 }}>
-            {q?.text.includes('?') ? q.text.split('?')[0].split('.').pop().trim() + '?' : q?.text.split('.').pop().trim()}
-          </p>
-          {q?.text && (
-            <p style={{ fontSize: 12, fontStyle: 'italic', color: '#64748B', margin: '8px 0 0' }}>
-              Host: "{q.text}"
-            </p>
-          )}
+        {/* Scenario Card */}
+        <div style={{
+          background: '#fff',
+          borderRadius: 32,
+          padding: '40px',
+          marginBottom: 32,
+          boxShadow: '0 20px 50px -15px rgba(0, 59, 110, 0.08)',
+          animation: 'mythFadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both',
+          border: '1px solid rgba(0, 59, 110, 0.05)'
+        }}>
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(0,173,239,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: 24 }}>💬</span>
+            </div>
+            <div>
+              <p style={{ fontSize: 22, fontWeight: 700, color: '#003B6E', margin: '0 0 16px', lineHeight: 1.4 }}>
+                {q?.text}
+              </p>
+              {q?.sectionLabel && (
+                <div style={{
+                  display: 'inline-flex',
+                  background: 'rgba(123, 194, 66, 0.1)',
+                  padding: '6px 16px', borderRadius: 8,
+                  fontSize: 11, fontWeight: 800, letterSpacing: '0.1em',
+                  color: '#7BC242', textTransform: 'uppercase'
+                }}>Target Outcome: {q.sectionLabel}</div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Option cards grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 28 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 20,
+          marginBottom: 32,
+          animation: 'mythFadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both'
+        }}>
           {q?.options.map((opt, i) => (
             <OptionCard key={opt.optionId} option={opt} selected={selected} onSelect={handleSelect} index={i} />
           ))}
         </div>
-
       </div>
 
-      {/* Fixed footer */}
+      {/* Floating Action Menu */}
       <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)',
-        borderTop: '1px solid #E2E8F0',
-        padding: '14px 20px',
-        boxShadow: '0 -4px 10px rgba(0, 59, 110, 0.03)'
+        position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)',
+        width: 'calc(100% - 48px)', maxWidth: 600,
+        background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        borderRadius: 24, padding: '16px',
+        boxShadow: '0 30px 60px -12px rgba(0, 59, 110, 0.25)',
+        zIndex: 1000,
+        animation: 'mythFadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s both'
       }}>
-        <div style={{ maxWidth: 860, margin: '0 auto' }}>
-          <button
-            onClick={handleLockIn}
-            disabled={!selected || submitting}
-            style={{
-              width: '100%', padding: '16px',
-              borderRadius: 12, border: 'none',
-              background: selected ? 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)' : '#F1F5F9',
-              color: selected ? '#fff' : '#94A3B8',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 14, fontWeight: 900, letterSpacing: '0.18em',
-              cursor: selected ? 'pointer' : 'not-allowed',
-              transition: 'all 0.2s',
-              boxShadow: selected ? '0 8px 25px -5px rgba(0, 173, 239, 0.3)' : 'none'
-            }}
-          >
-            {submitting ? 'PROCESSING...' : 'LOCK IN MY ANSWER'}
-          </button>
-        </div>
+        <button
+          onClick={handleLockIn}
+          disabled={!selected || submitting}
+          style={{
+            width: '100%', padding: '20px',
+            borderRadius: 16, border: 'none',
+            background: selected ? 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)' : '#F1F5F9',
+            color: selected ? '#fff' : '#94A3B8',
+            fontFamily: "var(--font-outfit), sans-serif",
+            fontSize: 16, fontWeight: 900, letterSpacing: '0.1em',
+            cursor: selected ? 'pointer' : 'not-allowed',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: selected ? '0 10px 20px -5px rgba(0, 173, 239, 0.4)' : 'none',
+            textTransform: 'uppercase'
+          }}
+        >
+          {submitting ? 'VALIDATING...' : (selected ? 'CONFIRM DECISION →' : 'SELECT AN OPTION')}
+        </button>
       </div>
 
-      {/* Bottom accent */}
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #00ADEF 0%, #7BC242 100%)', position: 'fixed', bottom: 0, left: 0, right: 0 }} />
+      {/* Brand accent */}
+      <div style={{ height: 4, background: 'linear-gradient(90deg, #00ADEF, #7BC242)', position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001 }} />
     </div>
   )
 }

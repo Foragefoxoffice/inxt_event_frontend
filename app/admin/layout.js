@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
+import styles from './admin.module.css'
 
 export default function AdminLayout({ children }) {
   const router = useRouter()
@@ -16,29 +17,25 @@ export default function AdminLayout({ children }) {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F8FBFF] flex font-sans selection:bg-[#00ADEF]/20">
+    <div className={styles.adminContainer}>
       
       {/* SIDEBAR */}
-      <aside className="w-72 bg-[#050e1a] flex flex-col fixed inset-y-0 shadow-2xl z-40">
-        <div className="p-8">
-          <img src="/logo_shield.png" alt="SalesVerse" className="h-10 w-auto mb-2" />
-          <p className="text-[#00ADEF] text-[10px] font-black uppercase tracking-[0.3em]">Control Center</p>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <img src="/logo_shield.png" alt="Logo" className={styles.sidebarLogo} />
+          <p className={styles.sidebarTitle}>Management Portal</p>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1">
+        <nav className={styles.nav}>
           {navItems.map((item) => {
             const isActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path))
             return (
               <button
                 key={item.label}
                 onClick={() => router.push(item.path)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all group ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-[#00ADEF] to-[#0096D1] text-white shadow-lg shadow-[#00ADEF]/20' 
-                    : 'text-white/40 hover:text-white hover:bg-white/5'
-                }`}
+                className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
               >
-                <svg className={`w-5 h-5 ${isActive ? 'text-white' : 'text-white/20 group-hover:text-[#00ADEF] transition-colors'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={styles.navIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
                 </svg>
                 {item.label}
@@ -47,19 +44,19 @@ export default function AdminLayout({ children }) {
           })}
         </nav>
 
-        <div className="p-8 mt-auto border-t border-white/5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#00ADEF] to-[#7BC242] flex items-center justify-center font-black text-white text-sm">A</div>
+        <div className={styles.sidebarFooter}>
+          <div className={styles.userInfo}>
+            <div className={styles.userAvatar}>AD</div>
             <div>
-              <p className="text-white text-xs font-bold leading-tight">Administrator</p>
-              <p className="text-white/30 text-[9px] uppercase tracking-widest mt-0.5">Global Controller</p>
+              <p className={styles.userName}>Administrator</p>
+              <p className={styles.userRole}>System Control</p>
             </div>
           </div>
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 ml-72">
+      <div className={styles.mainContent}>
         {children}
       </div>
     </div>

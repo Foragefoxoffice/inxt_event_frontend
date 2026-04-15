@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --grid-template-columns-15: repeat(15, minmax(0, 1fr));
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -17,19 +17,19 @@
 body {
   background: var(--quiz-bg);
   color: #0F172A;
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-outfit), sans-serif;
 }
 
 /* Quiz-specific font utility */
 .font-quiz-display {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-outfit), sans-serif;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
 }
 
 .font-quiz-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-outfit), sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;

@@ -58,199 +58,258 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
   const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
   return (
-    <div className="min-h-screen bg-[#F0F9FF] text-[#003B6E] font-sans selection:bg-[#00ADEF]/20">
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)', color: '#003B6E', fontFamily: "var(--font-outfit), sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap');
-        .hub-gradient { background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%); }
-        .coral-border { border-color: rgba(0,173,239,0.15); }
-        .coral-bg { background: #00ADEF; }
-        .coral-text { color: #00ADEF; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
-        .animate-blink { animation: pulse 1.2s infinite; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
+        .animate-blink { animation: pulse 2s infinite ease-in-out; }
+        .hub-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hub-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
       `}</style>
-      
+
       {/* Top Static Bar */}
-      <div className="fixed top-0 left-0 right-0 h-[5px] bg-[#00ADEF] z-50" />
-      <div className="fixed bottom-0 left-0 right-0 h-[5px] bg-[#7BC242] z-50" />
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #00ADEF, #7BC242)', zIndex: 100 }} />
 
       {/* Header */}
-      <div className="sticky top-[5px] z-40 bg-white border-b coral-border px-6 py-4 flex items-center justify-between shadow-sm">
-        <div>
-          <div className="text-[10px] font-black tracking-widest coral-text uppercase">iorta TechNXT · SalesVerse</div>
-          <div className="text-sm font-black uppercase">Interviewer Hub</div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-white/5 py-1.5 px-3 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-blink" />
-            <span className="text-[10px] font-black tracking-widest">READY</span>
+      <div style={{
+        position: 'sticky', top: 4, zIndex: 90,
+        background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid #E2E8F0', px: '24px', padding: '16px 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 32, height: 32, background: '#003B6E', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 16, fontWeight: 900 }}>H</div>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: '#00ADEF', textTransform: 'uppercase', lineHeight: 1 }}>iorta TechNXT</div>
+            <div style={{ fontSize: 14, fontWeight: 900, textTransform: 'uppercase', color: '#003B6E', marginTop: 2 }}>Interviewer Hub</div>
           </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #E2E8F0', padding: '6px 16px', borderRadius: 20 }}>
+          <div className="animate-blink" style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 8px #22C55E' }} />
+          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', color: '#003B6E' }}>SYSTEM READY</span>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-6 py-10 pb-20">
-        
+
         {/* STEP: HUB */}
         {step === 'hub' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div>
-              <div className="text-[10px] font-black tracking-[0.2em] text-[#003B6E]/40 uppercase mb-1">Myth Buster</div>
-              <h1 className="text-4xl font-black mb-2 uppercase text-[#003B6E]">Voices of Takaful AI</h1>
-              <p className="text-[#003B6E]/60 text-sm leading-relaxed">Interview industry leaders. Capture their honest opinions. Build the content series for iorta TechNXT 2026.</p>
+          <div style={{ animation: 'slideUp 0.6s ease both' }}>
+            <div style={{ textAlign: 'center', marginBottom: 56 }}>
+              <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.4em', color: '#00ADEF', textTransform: 'uppercase', marginBottom: 12 }}>Myth Buster Series</div>
+              <h1 style={{ fontSize: 48, fontWeight: 900, color: '#003B6E', lineHeight: 1.1, letterSpacing: '-0.02em', textTransform: 'uppercase', margin: 0 }}>Voices of Takaful AI</h1>
+              <div style={{ height: 4, width: 60, background: '#7BC242', margin: '24px auto', borderRadius: 2 }} />
+              <p style={{ fontSize: 18, color: '#64748B', maxWidth: 500, margin: '0 auto', fontWeight: 500, lineHeight: 1.5 }}>
+                Capture industry leadership insights for the <br />
+                <span style={{ color: '#003B6E', fontWeight: 700 }}>iorta TechNXT 2026</span> content series.
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button 
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24, marginBottom: 48 }}>
+              <button
                 onClick={() => setStep('start')}
-                className="col-span-2 bg-[#00ADEF] hover:bg-[#0096D1] text-white p-8 rounded-2xl border-2 border-[#00ADEF]/10 transition group text-center shadow-lg shadow-[#00ADEF]/20"
+                className="hub-card"
+                style={{
+                  gridColumn: 'span 2',
+                  background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)',
+                  padding: '48px 32px',
+                  borderRadius: 32,
+                  border: 'none',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  boxShadow: '0 20px 40px rgba(0, 173, 239, 0.25)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
               >
-                <div className="text-3xl mb-2 group-hover:scale-110 transition">+</div>
-                <div className="text-lg font-black uppercase">Start New Interview</div>
-                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Begin capture now</div>
-              </button>
-              
-              <button 
-                onClick={() => setStep('setup')}
-                className="bg-white hover:bg-[#F8FBFF] p-6 rounded-2xl border border-[#00ADEF]/10 transition text-center shadow-sm"
-              >
-                <div className="text-2xl mb-1 font-black text-[#00ADEF]">P</div>
-                <div className="text-[10px] font-black uppercase text-[#003B6E]/40 tracking-widest">Setup Checklist</div>
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(to left, rgba(255,255,255,0.1), transparent)', pointerEvents: 'none' }} />
+                <div style={{ fontSize: 40, marginBottom: 16 }}>🎙️</div>
+                <div style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Start New Interview</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 8, textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.15em' }}>Initialize Capture Protocol</div>
               </button>
 
-              <button 
-                onClick={() => setStep('log')}
-                className="bg-white hover:bg-[#F8FBFF] p-6 rounded-2xl border border-[#00ADEF]/10 transition text-center shadow-sm"
+              <button
+                onClick={() => setStep('setup')}
+                className="hub-card"
+                style={{
+                  background: '#fff',
+                  padding: '32px 24px',
+                  borderRadius: 24,
+                  border: '1px solid #E2E8F0',
+                  textAlign: 'center',
+                  cursor: 'pointer'
+                }}
               >
-                <div className="text-2xl mb-1 font-black text-[#7BC242]">L</div>
-                <div className="text-[10px] font-black uppercase text-[#003B6E]/40 tracking-widest">Interview Log</div>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>📋</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Setup Checklist</div>
+                <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, fontWeight: 600 }}>PRE-FLIGHT PROTOCOL</div>
+              </button>
+
+              <button
+                onClick={() => setStep('log')}
+                className="hub-card"
+                style={{
+                  background: '#fff',
+                  padding: '32px 24px',
+                  borderRadius: 24,
+                  border: '1px solid #E2E8F0',
+                  textAlign: 'center',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 12 }}>🕒</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Interview Log</div>
+                <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, fontWeight: 600 }}>SESSION RECORDS</div>
               </button>
             </div>
 
-            <div className="bg-[#00ADEF]/5 border-l-4 border-[#00ADEF] p-6 rounded-r-xl">
-              <div className="text-[10px] font-black text-[#00ADEF] tracking-widest uppercase mb-3">Invite Script</div>
-              <p className="italic text-[#003B6E]/80 leading-relaxed text-sm">"We're capturing 60-second real opinions from leaders today — would you share yours? It'll be on LinkedIn as part of our series. Takes 3 minutes."</p>
+            <div style={{
+              background: '#fff',
+              border: '1px solid #E2E8F0',
+              borderRadius: 24,
+              padding: '32px',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 6, background: '#00ADEF' }} />
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#00ADEF', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 12 }}>Field Prep: Invite Script</div>
+              <p style={{ fontSize: 18, color: '#475569', fontStyle: 'italic', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+                "We're capturing 60-second real opinions from leaders today — would you share yours? It'll be on LinkedIn as part of our series. Takes 3 minutes."
+              </p>
             </div>
           </div>
         )}
 
         {/* STEP: SETUP CHECKLIST */}
         {step === 'setup' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 text-center">
-            <div className="mx-auto w-12 h-12 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center font-black mb-4 border border-cyan-500/30">P</div>
-            <div>
-              <h1 className="text-2xl font-black uppercase">Professional Setup</h1>
-              <p className="text-white/40 text-sm">Follow these 5 points for premium content.</p>
+          <div style={{ animation: 'slideUp 0.6s ease both', textAlign: 'center' }}>
+            <div style={{ width: 64, height: 64, background: 'rgba(0, 173, 239, 0.1)', color: '#00ADEF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 900, margin: '0 auto 24px', border: '1px solid rgba(0, 173, 239, 0.2)' }}>P</div>
+            <div style={{ marginBottom: 40 }}>
+              <h1 style={{ fontSize: 32, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', margin: 0 }}>Professional Setup</h1>
+              <p style={{ fontSize: 15, color: '#64748B', marginTop: 8 }}>Follow these industry standards for premium quality.</p>
             </div>
 
-            <div className="text-left space-y-4">
+            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 40 }}>
               {[
                 { n: "01", t: "Guest Comfort", d: "Ensure guest is comfortably seated and at eye-level with the camera." },
                 { n: "02", t: "Audio Check", d: "Test the lapel or handheld mic. Listen for interference / clothing rustle." },
                 { n: "03", t: "Lighting Check", d: "Guest must face the primary light source. Avoid strong shadows on eyes." },
-                { n: "04", t: "Silence Protocol", d: "Interviewer and Guest phones on Silent/Airplane mode. Notify nearby staff." },
-                { n: "05", t: "Orientation", d: "Rehearse the intro ('We're here with...') and the closing sign-off." }
+                { n: "04", t: "Silence Protocol", d: "Turn off notifications. Interviewer and Guest phones on Silent/Airplane mode." },
+                { n: "05", t: "Content Flow", d: "Rehearse the intro ('We're here with...') and the closing sign-off." }
               ].map(item => (
-                <div key={item.n} className="bg-white/5 p-5 rounded-2xl border border-white/5 flex gap-4">
-                  <div className="text-xs font-black coral-text mt-1">{item.n}</div>
+                <div key={item.n} style={{ background: '#fff', padding: '20px 24px', borderRadius: 20, border: '1px solid #E2E8F0', display: 'flex', gap: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: '#00ADEF', marginTop: 2 }}>{item.n}</div>
                   <div>
-                    <div className="text-sm font-black uppercase mb-1">{item.t}</div>
-                    <div className="text-xs text-white/40 leading-relaxed">{item.d}</div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', marginBottom: 4 }}>{item.t}</div>
+                    <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1.5, fontWeight: 500 }}>{item.d}</div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <button onClick={() => setStep('hub')} className="w-full py-4 bg-white/10 rounded-xl font-black uppercase tracking-widest text-xs">Return to Hub</button>
+            <button onClick={() => setStep('hub')} style={{ width: '100%', padding: '18px', background: '#fff', borderRadius: 16, border: '2px solid #E2E8F0', color: '#003B6E', fontWeight: 800, cursor: 'pointer', fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em' }}>RETURN TO HUB</button>
           </div>
         )}
 
         {/* STEP: INTERVIEW LOG */}
         {step === 'log' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 text-center">
-            <div className="mx-auto w-12 h-12 bg-orange-500/20 text-orange-400 rounded-full flex items-center justify-center font-black mb-4 border border-orange-500/30">L</div>
-            <div>
-              <h1 className="text-2xl font-black uppercase">Interview Log</h1>
-              <p className="text-white/40 text-sm">Submission history for this device.</p>
+          <div style={{ animation: 'slideUp 0.6s ease both', textAlign: 'center' }}>
+            <div style={{ width: 64, height: 64, background: 'rgba(123, 194, 66, 0.1)', color: '#7BC242', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 900, margin: '0 auto 24px', border: '1px solid rgba(123, 194, 66, 0.2)' }}>L</div>
+            <div style={{ marginBottom: 40 }}>
+              <h1 style={{ fontSize: 32, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', margin: 0 }}>Session Records</h1>
+              <p style={{ fontSize: 15, color: '#64748B', marginTop: 8 }}>Historical log of interviews captured on this device.</p>
             </div>
 
             {sessions.length === 0 ? (
-              <div className="py-20 bg-white/5 rounded-3xl border border-dashed border-white/10 text-white/30 text-xs italic uppercase tracking-[0.2em]">
-                No Interviews Logged Yet Today
+              <div style={{ padding: '64px', background: '#fff', borderRadius: 32, border: '2px dashed #E2E8F0', color: '#CBD5E1', fontSize: 14, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 40 }}>
+                No records found for this session
               </div>
             ) : (
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 40 }}>
                 {sessions.map((s, idx) => (
-                  <div key={idx} className="bg-white/5 p-4 rounded-xl border border-white/5 flex justify-between items-center text-left">
+                  <div key={idx} style={{ background: '#fff', padding: '20px 24px', borderRadius: 20, border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left' }}>
                     <div>
-                      <div className="text-sm font-black uppercase">{s.name}</div>
-                      <div className="text-[10px] text-white/40 uppercase tracking-widest">{s.org}</div>
+                      <div style={{ fontSize: 15, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase' }}>{s.name}</div>
+                      <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, marginTop: 2 }}>{s.org}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] font-black coral-text">{s.time}</div>
-                      <div className="text-[9px] text-green-400 font-black tracking-widest mt-1">SYNCED ✓</div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: 12, fontWeight: 800, color: '#00ADEF' }}>{s.time}</div>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: '#22C55E', marginTop: 4, letterSpacing: '0.05em' }}>SYNCED ✓</div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
-            <button onClick={() => setStep('hub')} className="w-full py-4 bg-white/10 rounded-xl font-black uppercase tracking-widest text-xs">Return to Hub</button>
+            <button onClick={() => setStep('hub')} style={{ width: '100%', padding: '18px', background: '#fff', borderRadius: 16, border: '2px solid #E2E8F0', color: '#003B6E', fontWeight: 800, cursor: 'pointer', fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em' }}>RETURN TO HUB</button>
           </div>
         )}
 
         {/* STEP: START (Guest Details) */}
         {step === 'start' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div>
-              <h1 className="text-2xl font-black uppercase">Guest Details</h1>
-              <p className="text-white/40 text-sm">Who are you interviewing?</p>
+          <div style={{ animation: 'slideUp 0.6s ease both' }}>
+            <div style={{ marginBottom: 40 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#00ADEF', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>Capture Protocol</div>
+              <h1 style={{ fontSize: 32, fontWeight: 800, color: '#003B6E', textTransform: 'uppercase', margin: 0 }}>Guest Interview Details</h1>
+              <p style={{ fontSize: 15, color: '#64748B', marginTop: 8 }}>Please provide the professional profile of the interviewee.</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase font-black tracking-widest text-[#64748B]">Full Name *</label>
-                <input 
-                  className="w-full bg-white border border-slate-200 rounded-xl px-5 py-4 focus:border-[#00ADEF] outline-none transition text-[#003B6E] font-bold"
-                  value={guest.name} onChange={e => setGuest({...guest, name: e.target.value})}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, background: '#fff', padding: '40px', borderRadius: 32, border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Full Name *</label>
+                <input
+                  style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '16px 20px', fontSize: 16, fontWeight: 700, color: '#003B6E', outline: 'none' }}
+                  value={guest.name} onChange={e => setGuest({ ...guest, name: e.target.value })}
                   placeholder="e.g. Azlan Harun"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase font-black tracking-widest text-[#64748B]">Title</label>
-                  <input className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#003B6E] font-bold outline-none focus:border-[#00ADEF]" value={guest.title} onChange={e => setGuest({...guest, title: e.target.value})} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Professional Title</label>
+                  <input placeholder='e.g. CEO' style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, color: '#003B6E', outline: 'none' }} value={guest.title} onChange={e => setGuest({ ...guest, title: e.target.value })} />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase font-black tracking-widest text-[#64748B]">Org</label>
-                  <input className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#003B6E] font-bold outline-none focus:border-[#00ADEF]" value={guest.org} onChange={e => setGuest({...guest, org: e.target.value})} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Organization / Firm</label>
+                  <input placeholder='e.g. iorta' style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, color: '#003B6E', outline: 'none' }} value={guest.org} onChange={e => setGuest({ ...guest, org: e.target.value })} />
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] uppercase font-black tracking-widest text-[#64748B]">Select Role Category</label>
-                <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Industry Segment Selection</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   {PERSONAS.map(p => (
-                    <button 
+                    <button
                       key={p.id}
-                      onClick={() => setGuest({...guest, persona: p.id})}
-                      className={`p-4 rounded-xl border text-left transition ${guest.persona === p.id ? 'bg-[#F0F9FF] border-[#00ADEF]' : 'bg-white border-slate-100 hover:bg-[#F8FBFF]'}`}
+                      onClick={() => setGuest({ ...guest, persona: p.id })}
+                      style={{
+                        padding: '16px', borderRadius: 12, border: guest.persona === p.id ? '2px solid #00ADEF' : '1px solid #E2E8F0',
+                        background: guest.persona === p.id ? 'rgba(0, 173, 239, 0.05)' : '#fff',
+                        textAlign: 'left', cursor: 'pointer', transition: 'all 0.2s'
+                      }}
                     >
-                      <div className={`text-xs font-black uppercase mb-1 ${guest.persona === p.id ? 'text-[#00ADEF]' : 'text-[#003B6E]'}`}>{p.title}</div>
-                      <div className="text-[10px] text-[#64748B] leading-tight">{p.desc}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: guest.persona === p.id ? '#00ADEF' : '#003B6E', marginBottom: 4 }}>{p.title}</div>
+                      <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1.3 }}>{p.desc}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-6 flex gap-3">
-                <button onClick={() => setStep('hub')} className="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-bold">BACK</button>
-                <button 
+              <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+                <button onClick={() => setStep('hub')} style={{ padding: '18px 32px', background: '#F1F5F9', borderRadius: 16, border: 'none', color: '#64748B', fontWeight: 800, cursor: 'pointer', fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em' }}>CANCEL</button>
+                <button
                   onClick={() => setStep('select')}
                   disabled={!guest.name || !guest.persona}
-                  className="flex-1 bg-[#00ADEF] hover:bg-[#0096D1] text-white disabled:opacity-30 py-4 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-[#00ADEF]/20"
-                >
-                  Select Questions →
-                </button>
+                  style={{
+                    flex: 1, background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)', color: '#fff', border: 'none',
+                    borderRadius: 16, padding: '18px', fontSize: 14, fontWeight: 900, textTransform: 'uppercase',
+                    letterSpacing: '0.1em', cursor: 'pointer', opacity: (!guest.name || !guest.persona) ? 0.4 : 1,
+                    boxShadow: '0 10px 25px rgba(0, 173, 239, 0.3)'
+                  }}
+                >CURATE QUESTIONS →</button>
               </div>
             </div>
           </div>
@@ -258,38 +317,46 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
 
         {/* STEP: SELECT QUESTIONS */}
         {step === 'select' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-             <div>
-              <div className="text-[10px] font-black coral-text tracking-widest uppercase mb-1">Selected Category: {PERSONAS.find(p => p.id === guest.persona)?.title}</div>
-              <h1 className="text-2xl font-black uppercase">Curate Questions</h1>
-              <p className="text-white/40 text-sm">Choose 3–5 industry-challenging points.</p>
+          <div style={{ animation: 'slideUp 0.6s ease both' }}>
+            <div style={{ marginBottom: 40 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#00ADEF', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>Target Core: {PERSONAS.find(p => p.id === guest.persona)?.title}</div>
+              <h1 style={{ fontSize: 32, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', margin: 0 }}>Curate Viewpoints</h1>
+              <p style={{ fontSize: 15, color: '#64748B', marginTop: 8 }}>Select 3–5 items for a meaningful industry discourse.</p>
             </div>
-            
-            <div className="space-y-10">
-              <div className="space-y-4">
-                <div className="text-[10px] font-black coral-text tracking-widest uppercase bg-white/5 px-3 py-1.5 rounded inline-block">Recommended for this Category</div>
-                <div className="space-y-3">
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 900, color: '#00ADEF', letterSpacing: '0.15em', textTransform: 'uppercase', background: 'rgba(0, 173, 239, 0.05)', padding: '6px 16px', borderRadius: 8, alignSelf: 'flex-start' }}>Segment Recommendations</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {recQuestions.map((q, i) => {
                     const isSelected = selectedQIds.includes(q.questionId)
                     return (
-                      <button 
+                      <button
                         key={q.questionId}
                         onClick={() => {
                           setSelectedQIds(prev => isSelected ? prev.filter(id => id !== q.questionId) : [...prev, q.questionId])
                         }}
-                        className={`w-full p-5 rounded-2xl border text-left transition relative flex gap-4 ${isSelected ? 'bg-[#00ADEF]/10 border-[#00ADEF]' : 'bg-white border-[#003B6E]/10 hover:bg-[#F8FBFF]'}`}
+                        style={{
+                          width: '100%', padding: '24px', borderRadius: 15, border: isSelected ? '2px solid #00ADEF' : '1px solid #E2E8F0',
+                          background: isSelected ? 'rgba(0, 173, 239, 0.03)' : '#fff',
+                          textAlign: 'left', transition: 'all 0.2s', display: 'flex', gap: 20, cursor: 'pointer'
+                        }}
                       >
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isSelected ? 'bg-[#00ADEF] text-white' : 'bg-[#003B6E]/5 text-[#003B6E]'}`}>
+                        <div style={{
+                          width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                          background: isSelected ? '#00ADEF' : '#F1F5F9',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 12, fontWeight: 900, color: isSelected ? '#fff' : '#003B6E'
+                        }}>
                           {isSelected ? '✓' : i + 1}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded ${q.interviewType === 'tf' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-orange-500/20 text-orange-400'}`}>
-                              {q.interviewType === 'tf' ? 'TRUE / FALSE' : 'OPEN OPINION'}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                            <span style={{ fontSize: 9, fontWeight: 900, px: '8px', py: '2px', background: q.interviewType === 'tf' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(123, 194, 66, 0.1)', color: q.interviewType === 'tf' ? '#166534' : '#3F6212', borderRadius: 4, textTransform: 'uppercase' }}>
+                              {q.interviewType === 'tf' ? 'CONSENSUS' : 'QUALITATIVE'}
                             </span>
-                            <span className="text-[10px] bg-[#C8922A]/20 text-[#C8922A] font-black px-2 py-0.5 rounded uppercase">REC</span>
                           </div>
-                          <div className="text-[15px] font-bold leading-snug">{q?.text}</div>
+                          <div style={{ fontSize: 16, fontWeight: 700, color: '#003B6E', lineHeight: 1.4 }}>{q?.text}</div>
                         </div>
                       </button>
                     )
@@ -297,29 +364,38 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="text-[10px] font-black text-white/30 tracking-widest uppercase bg-white/5 px-3 py-1.5 rounded inline-block">Other Industry Viewpoints</div>
-                <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 900, color: '#94A3B8', letterSpacing: '0.15em', textTransform: 'uppercase', background: '#F8FAFC', padding: '6px 16px', borderRadius: 8, alignSelf: 'flex-start', border: '1px solid #E2E8F0' }}>General Industry Topics</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {otherQuestions.map((q, i) => {
                     const isSelected = selectedQIds.includes(q.questionId)
                     return (
-                      <button 
+                      <button
                         key={q.questionId}
                         onClick={() => {
                           setSelectedQIds(prev => isSelected ? prev.filter(id => id !== q.questionId) : [...prev, q.questionId])
                         }}
-                        className={`w-full p-5 rounded-2xl border text-left transition relative flex gap-4 ${isSelected ? 'bg-[#00ADEF]/10 border-[#00ADEF]' : 'bg-white border-[#003B6E]/10 hover:bg-[#F8FBFF]'}`}
+                        style={{
+                          width: '100%', padding: '24px', borderRadius: 24, border: isSelected ? '2px solid #00ADEF' : '1px solid #E2E8F0',
+                          background: isSelected ? 'rgba(0, 173, 239, 0.03)' : '#fff',
+                          textAlign: 'left', transition: 'all 0.2s', display: 'flex', gap: 20, cursor: 'pointer'
+                        }}
                       >
-                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isSelected ? 'bg-[#00ADEF] text-white' : 'bg-[#003B6E]/5 text-[#003B6E]'}`}>
+                        <div style={{
+                          width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                          background: isSelected ? '#00ADEF' : '#F1F5F9',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 12, fontWeight: 900, color: isSelected ? '#fff' : '#003B6E'
+                        }}>
                           {isSelected ? '✓' : i + 1}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded ${q.interviewType === 'tf' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-orange-500/20 text-orange-400'}`}>
-                              {q.interviewType === 'tf' ? 'TRUE/FALSE' : 'OPEN OPINION'}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                            <span style={{ fontSize: 9, fontWeight: 900, px: '8px', py: '2px', background: '#F1F5F9', color: '#94A3B8', borderRadius: 4, textTransform: 'uppercase' }}>
+                              {q.interviewType === 'tf' ? 'CONSENSUS' : 'QUALITATIVE'}
                             </span>
                           </div>
-                          <div className="text-[15px] font-bold leading-snug">{q?.text}</div>
+                          <div style={{ fontSize: 16, fontWeight: 700, color: '#003B6E', lineHeight: 1.4 }}>{q?.text}</div>
                         </div>
                       </button>
                     )
@@ -328,201 +404,208 @@ export function InterviewerHub({ questions, onSubmit, submitting, eventId }) {
               </div>
             </div>
 
-            <div className="pt-6 flex gap-3 sticky bottom-4">
-              <button onClick={() => setStep('start')} className="px-8 py-4 bg-white border border-slate-200 hover:bg-[#F8FBFF] rounded-xl font-bold shadow-md">BACK</button>
-              <button 
+            <div style={{ pt: '40px', display: 'flex', gap: 16, position: 'sticky', bottom: 24, zIndex: 100, marginTop: 48 }}>
+              <button onClick={() => setStep('start')} style={{ px: '32px', padding: '18px 32px', background: '#fff', border: '1px solid #E2E8F0', borderRadius: 16, fontWeight: 800, cursor: 'pointer', fontSize: 13, textTransform: 'uppercase', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>BACK</button>
+              <button
                 onClick={() => { setStep('interview'); setTimerActive(true); }}
                 disabled={selectedQIds.length === 0}
-                className="flex-1 bg-linear-to-r from-[#00ADEF] to-[#003B6E] hover:scale-[1.02] active:scale-[0.98] text-white disabled:opacity-50 py-4 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-[#00ADEF]/20 transition-all"
+                style={{
+                  flex: 1, background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)', color: '#fff', border: 'none',
+                  borderRadius: 16, padding: '18px', fontSize: 15, fontWeight: 900, textTransform: 'uppercase',
+                  letterSpacing: '0.1em', cursor: 'pointer', opacity: selectedQIds.length === 0 ? 0.4 : 1,
+                  boxShadow: '0 15px 35px rgba(0, 173, 239, 0.3)', transition: 'all 0.3s'
+                }}
               >
-                Start Recording ({selectedQIds.length}) →
+                INITIALIZE RECORDING ({selectedQIds.length}) →
+              </button>
+            </div>
+          </div>
+        )}
+        {/* STEP: INTERVIEW MODE */}
+        {step === 'interview' && (
+          <div style={{ animation: 'fadeIn 0.6s ease both' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff', padding: '24px 32px', borderRadius: 24, border: '1px solid #E2E8F0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', marginBottom: 32 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>Protocol Timer</div>
+                <div style={{ fontSize: 40, fontWeight: 900, color: timer < 30 ? '#EF4444' : '#00ADEF', fontVariantNumeric: 'tabular-nums' }}>
+                  {formatTime(timer)}
+                </div>
+              </div>
+              <div style={{ height: 40, width: 1, background: '#E2E8F0' }} />
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>Live Interviewee</div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase' }}>{guest.name}</div>
+                <div style={{ fontSize: 11, color: '#00ADEF', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{guest.org}</div>
+              </div>
+            </div>
+
+            <div style={{ background: '#fff', borderRadius: 20, border: '1px solid #E2E8F0', boxShadow: '0 25px 50px -12px rgba(0, 59, 110, 0.12)', overflow: 'hidden' }}>
+              <div style={{ background: '#003B6E', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' }}>
+                <span style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em' }}>Capture Interface</span>
+                <span style={{ fontSize: 11, fontWeight: 800, opacity: 0.6 }}>SEQUENCE {currentQIdx + 1} OF {selectedQuestions.length}</span>
+              </div>
+
+              <div style={{ padding: '64px 48px', textAlign: 'center', minHeight: '340px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#00ADEF', letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 24 }}>Inquiry Objective</div>
+                <h2 style={{ fontSize: '32px', fontWeight: 700, color: '#003B6E', lineHeight: 1.25, margin: 0 }}>"{selectedQuestions[currentQIdx]?.text}"</h2>
+
+                {selectedQuestions[currentQIdx]?.hostProposal && (
+                  <div style={{ marginTop: 40, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 15, padding: '24px 32px', maxWidth: '560px', margin: '40px auto 0' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Delivery Guide</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, fontStyle: 'italic', color: '#003B6E', lineHeight: 1.5 }}>"{selectedQuestions[currentQIdx].hostProposal}"</div>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ padding: '0 48px 48px' }}>
+                <textarea
+                  style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: '24px', fontSize: 15, fontWeight: 500, color: '#003B6E', outline: 'none', minHeight: '120px', transition: 'border-color 0.2s' }}
+                  placeholder="Capture key insights or observation nodes here..."
+                  value={answers[selectedQuestions[currentQIdx]?.questionId] || ''}
+                  onChange={e => setAnswers({ ...answers, [selectedQuestions[currentQIdx]?.questionId]: e.target.value })}
+                />
+                <div style={{ display: 'flex', gap: 16, marginTop: 24 }}>
+                  <button
+                    onClick={() => setCurrentQIdx(i => Math.max(0, i - 1))}
+                    disabled={currentQIdx === 0}
+                    style={{ padding: '18px 24px', background: '#F1F5F9', border: 'none', borderRadius: 16, cursor: 'pointer', opacity: currentQIdx === 0 ? 0.2 : 1 }}
+                  >←</button>
+                  <button
+                    onClick={() => {
+                      if (currentQIdx < selectedQuestions.length - 1) setCurrentQIdx(i => i + 1)
+                      else setStep('wrap')
+                    }}
+                    style={{
+                      flex: 1, background: 'linear-gradient(135deg, #00ADEF 0%, #003B6E 100%)', color: '#fff', border: 'none',
+                      borderRadius: 16, padding: '18px', fontSize: 15, fontWeight: 900, textTransform: 'uppercase',
+                      letterSpacing: '0.1em', cursor: 'pointer', boxShadow: '0 10px 20px rgba(0, 173, 239, 0.3)'
+                    }}
+                  >
+                    {currentQIdx === selectedQuestions.length - 1 ? 'CONCLUDE INTERVIEW →' : 'NEXT PROTOCOL →'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* STEP: WRAP UP */}
+        {step === 'wrap' && (
+          <div style={{ animation: 'slideUp 0.6s ease both' }}>
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <div style={{ width: 80, height: 80, background: 'rgba(34, 197, 94, 0.1)', color: '#22C55E', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', marginBottom: 24, fontSize: 32, fontWeight: 900, border: '1px solid rgba(34, 197, 94, 0.2)', margin: '0 auto 24px' }}>✓</div>
+              <h1 style={{ fontSize: 32, fontWeight: 900, color: '#003B6E', textTransform: 'uppercase', margin: 0 }}>Interview Captured</h1>
+              <p style={{ fontSize: 15, color: '#64748B', marginTop: 8 }}>Finalizing documentation for the content sequence.</p>
+            </div>
+
+            <div style={{ background: '#fff', borderRadius: 32, padding: '40px', border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', gap: 32 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Post-Interview Action</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#F8FAFC', padding: '16px 20px', borderRadius: 16 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ADEF' }} />
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>"You are now officially part of Voices of Takaful AI. We'll tag you when it goes live."</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#F8FAFC', padding: '16px 20px', borderRadius: 16 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ADEF' }} />
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Collect professional handle / LinkedIn for correct tagging.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>LinkedIn Profile / URL</label>
+                  <input style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: '14px 20px', fontSize: 14, fontWeight: 700, color: '#003B6E', outline: 'none' }} value={guest.li} onChange={e => setGuest({ ...guest, li: e.target.value })} placeholder="In/profile-name" />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Email</label>
+                  <input style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: '14px 20px', fontSize: 14, fontWeight: 700, color: '#003B6E', outline: 'none' }} value={guest.email} onChange={e => setGuest({ ...guest, email: e.target.value })} />
+                </div>
+              </div>
+
+              <button
+                onClick={() => { setStep('final'); handleComplete(); }}
+                style={{
+                  width: '100%', background: 'linear-gradient(135deg, #003B6E 0%, #001A33 100%)', color: '#fff', border: 'none',
+                  borderRadius: 16, padding: '20px', fontSize: 14, fontWeight: 900, textTransform: 'uppercase',
+                  letterSpacing: '0.2em', cursor: 'pointer', boxShadow: '0 10px 30px rgba(0, 59, 110, 0.3)', marginTop: 8
+                }}
+              >
+                FINISH & GENERATE CARD →
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP: INTERVIEW MODE */}
-        {step === 'interview' && (
-          <div className="space-y-8 animate-in fade-in zoom-in duration-500">
-            
-            <div className="flex items-center justify-between bg-white p-6 rounded-2xl border-2 border-[#00ADEF]/10 shadow-sm">
-              <div className="text-center">
-                <div className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1">Session Timer</div>
-                <div className={`text-4xl font-black tabular-nums ${timer < 30 ? 'text-red-500 animate-blink' : 'text-[#00ADEF]'}`}>
-                  {formatTime(timer)}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1">Guest</div>
-                <div className="text-lg font-black uppercase text-[#003B6E]">{guest.name}</div>
-                <div className="text-[10px] text-[#00ADEF] font-bold uppercase tracking-widest">{guest.org}</div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-               <div className="bg-[#003B6E] px-6 py-4 flex justify-between items-center text-white">
-                 <span className="text-[10px] font-black uppercase tracking-widest">Live Question Guide</span>
-                 <span className="text-[10px] font-bold opacity-80">Q {currentQIdx + 1} of {selectedQuestions.length}</span>
-               </div>
-               
-               <div className="p-10 space-y-8 text-center min-h-[380px] flex flex-col justify-center">
-                  <div className="text-[10px] font-black text-[#00ADEF] tracking-[0.2em] uppercase">Interviewer Ask:</div>
-                  <h2 className="text-3xl font-black leading-tight text-[#003B6E]">"{selectedQuestions[currentQIdx]?.text}"</h2>
-                  
-                  {selectedQuestions[currentQIdx]?.hostProposal && (
-                    <div className="bg-[#F8FBFF] border border-[#00ADEF]/10 rounded-xl px-6 py-5 max-w-md mx-auto">
-                      <div className="text-[10px] font-black text-[#003B6E]/40 uppercase mb-2">Host Script (Read Aloud)</div>
-                      <div className="text-[15px] font-bold italic text-[#003B6E]">"{selectedQuestions[currentQIdx].hostProposal}"</div>
-                    </div>
-                  )}
-
-                  {selectedQuestions[currentQIdx]?.interviewerTip && (
-                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-[13px] text-emerald-700 font-medium italic max-w-sm mx-auto">
-                      Expert Guidance: {selectedQuestions[currentQIdx].interviewerTip}
-                    </div>
-                  )}
-               </div>
-
-               <div className="px-10 pb-10 space-y-5">
-                 <textarea 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-5 text-sm outline-none focus:border-[#00ADEF] focus:bg-white transition h-24 font-medium text-[#003B6E]"
-                  placeholder="Notes on the answer (for content team)..."
-                  value={answers[selectedQuestions[currentQIdx]?.questionId] || ''} 
-                  onChange={e => setAnswers({...answers, [selectedQuestions[currentQIdx]?.questionId]: e.target.value})}
-                 />
-                 <div className="flex gap-4">
-                    <button 
-                      onClick={() => setCurrentQIdx(i => Math.max(0, i - 1))}
-                      disabled={currentQIdx === 0}
-                      className="px-6 py-4 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl disabled:opacity-20 transition-colors"
-                    >←</button>
-                    <button 
-                      onClick={() => {
-                        if (currentQIdx < selectedQuestions.length - 1) setCurrentQIdx(i => i + 1)
-                        else setStep('wrap')
-                      }}
-                      className="flex-1 bg-linear-to-r from-[#00ADEF] to-[#003B6E] text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-[#00ADEF]/20 hover:scale-[1.01] active:scale-[0.99] transition-all"
-                    >
-                      {currentQIdx === selectedQuestions.length - 1 ? 'Wrap Up Session →' : 'Next Question →'}
-                    </button>
-                 </div>
-               </div>
-            </div>
-
-            <div className="bg-white/5 border-l-4 border-[#00ADEF]/50 p-6 rounded-r-xl">
-              <div className="text-[10px] font-black text-[#00ADEF] tracking-widest uppercase mb-1">Follow-up Tip</div>
-              <p className="text-xs text-white/60">"Say more — why do you think that?" Or: "Give me an example from your own experience."</p>
-            </div>
-          </div>
-        )}
-
-        {/* STEP: WRAP UP */}
-        {step === 'wrap' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-[#7BC242]/20 text-[#7BC242] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl border border-[#7BC242]/30">✓</div>
-              <h1 className="text-3xl font-black uppercase">Interview Complete</h1>
-              <p className="text-white/40 mt-2">Closing steps with the guest.</p>
-            </div>
-
-            <div className="bg-white/5 border coral-border rounded-2xl p-6 space-y-6">
-               <div className="space-y-4">
-                  <div className="text-[10px] font-black coral-text tracking-widest uppercase">Post-Interview Action</div>
-                  <div className="space-y-3">
-                    <div className="flex gap-4 items-start bg-white/5 p-4 rounded-xl">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#00ADEF] mt-1.5" />
-                      <div className="text-sm text-white/70">"You are now officially part of Voices of Takaful AI. We'll tag you when it goes live."</div>
-                    </div>
-                    <div className="flex gap-4 items-start bg-white/5 p-4 rounded-xl">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#00ADEF] mt-1.5" />
-                      <div className="text-sm text-white/70">Collect business card / LinkedIn for tagging.</div>
-                    </div>
-                  </div>
-               </div>
-
-               <div className="space-y-4 pt-4 border-t border-white/5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                       <label className="text-[10px] uppercase font-black tracking-widest text-white/30">LinkedIn URL</label>
-                       <input className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs" value={guest.li} onChange={e => setGuest({...guest, li: e.target.value})} placeholder="In/name" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] uppercase font-black tracking-widest text-white/30">Contact Email</label>
-                       <input className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs" value={guest.email} onChange={e => setGuest({...guest, email: e.target.value})} />
-                    </div>
-                  </div>
-               </div>
-            </div>
-
-            <button 
-              onClick={() => { setStep('final'); handleComplete(); }}
-              className="w-full bg-[#003B6E] hover:bg-[#004a99] py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl"
-            >
-              Finish & Reveal Card →
-            </button>
-          </div>
-        )}
-
         {/* STEP: FINAL (Featured Card) */}
         {step === 'final' && (
-          <div className="space-y-10 animate-in fade-in duration-1000 text-center">
-            <div className="text-[10px] font-black coral-text tracking-[0.3em] uppercase">Success</div>
-            
-            <div className="bg-[#003B6E] rounded-[40px] p-12 py-16 relative overflow-hidden group shadow-2xl">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-white/10 transition duration-1000" />
-               <div className="relative z-10 space-y-8">
-                  <div className="text-[10px] font-black text-white/50 tracking-widest uppercase">iorta TechNXT · MTA × TIC 2026</div>
-                  <div className="space-y-2">
-                    <div className="text-5xl font-black">MYTH BUSTER</div>
-                    <div className="text-lg opacity-80 font-bold uppercase tracking-widest">Voices of Takaful AI</div>
-                  </div>
-                  
-                  <div className="w-24 h-24 bg-white/10 border-4 border-white/20 rounded-full flex items-center justify-center mx-auto text-4xl font-black">
-                     {guest.name.charAt(0)}
-                  </div>
+          <div style={{ animation: 'fadeIn 1s ease both', textAlign: 'center' }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: '#22C55E', textTransform: 'uppercase', letterSpacing: '0.4em', marginBottom: 40 }}>Protocol Success</div>
 
-                  <div className="space-y-1">
-                    <div className="text-3xl font-black uppercase">{guest.name}</div>
-                    <div className="text-sm opacity-60 uppercase font-bold tracking-widest">{guest.title} · {guest.org}</div>
-                  </div>
+            <div style={{
+              background: 'linear-gradient(135deg, #003B6E 0%, #001A33 100%)',
+              borderRadius: 48, padding: '80px 48px', position: 'relative', overflow: 'hidden',
+              boxShadow: '0 40px 80px -20px rgba(0, 59, 110, 0.4)', marginBottom: 56
+            }}>
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '60%', height: '100%', background: 'radial-gradient(circle at center, rgba(0, 173, 239, 0.15) 0%, transparent 70%)', transform: 'translate(20%, -20%)' }} />
+              <div style={{ position: 'relative', zIndex: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>iorta TechNXT · MTA × TIC 2026</div>
+                <div style={{ marginBottom: 48 }}>
+                  <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1 }}>MYTH BUSTER</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 8 }}>Voices of Takaful AI</div>
+                </div>
 
-                  <div className="text-[10px] opacity-40 font-black tracking-widest uppercase py-4 border-t border-white/10 mt-8">
-                    #VoicesOfTakafulAI #iortaTechNXT #SalesVerse #MTAxTIC
-                  </div>
-               </div>
+                <div style={{ width: 120, height: 120, background: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, fontWeight: 900, color: '#fff', margin: '0 auto 32px' }}>
+                  {guest.name.charAt(0)}
+                </div>
+
+                <div>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', textTransform: 'uppercase' }}>{guest.name}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 8 }}>{guest.title} <span style={{ mx: 8, opacity: 0.3 }}>·</span> {guest.org}</div>
+                </div>
+
+                <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', width: 100, margin: '40px auto' }} />
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#7BC242', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  #VoicesOfTakafulAI #iortaTechNXT #SalesVerse
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-2xl mx-auto">
-              <div className="space-y-4 text-left">
-                <div className="text-[10px] font-black coral-text tracking-widest uppercase mb-1">Guest Share Option A: Manual</div>
-                <p className="text-xs text-white/40 leading-relaxed">Copy the pre-written post text to share from any app on your device.</p>
-                <button 
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, maxWidth: 800, margin: '0 auto 64px', textAlign: 'left' }}>
+              <div style={{ background: '#fff', padding: '32px', borderRadius: 24, border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: 11, fontWeight: 900, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Share: Manual Copy</div>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5, marginBottom: 24 }}>Use this text to tag the guest and firm on LinkedIn/X instantly.</p>
+                <button
                   onClick={handleCopyPost}
-                  className={`flex items-center gap-3 w-full px-6 py-4 rounded-2xl border transition ${copied ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-white/5 border-white/10 hover:bg-white/15 text-white/70'}`}
+                  style={{
+                    width: '100%', padding: '16px', borderRadius: 12, border: 'none',
+                    background: copied ? '#22C55E' : '#F1F5F9', color: copied ? '#fff' : '#003B6E',
+                    fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
                 >
-                  <span className="text-[10px] font-black uppercase tracking-widest">{copied ? 'COPIED TO CLIPBOARD ✓' : 'COPY SOCIAL POST FOR GUEST'}</span>
+                  {copied ? 'COPIED TO CLIPBOARD ✓' : 'COPY SOCIAL SEQUENCE'}
                 </button>
               </div>
 
-              <div className="space-y-4 text-left">
-                <div className="text-[10px] font-black coral-text tracking-widest uppercase mb-1">Guest Share Option B: Mobile Scan</div>
-                <div className="bg-white p-4 rounded-3xl inline-block shadow-2xl relative group">
-                  <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`https://twitter.com/intent/tweet?text=Just finished my interview for 'Voices of Takaful AI' at iorta TechNXT 2026. 🚀 @iorta #VoicesOfTakafulAI #iortaTechNXT`)}&size=160x160&color=0D0505`}
-                    alt="Scan to Share"
-                    className="w-[140px] h-[140px]"
-                  />
-                  <div className="absolute inset-0 bg-black/60 rounded-[40px] opacity-0 group-hover:opacity-100 transition flex items-center justify-center p-4">
-                     <span className="text-[9px] font-black text-white text-center leading-tight uppercase tracking-widest">Scan to post instantly from mobile</span>
-                  </div>
+              <div style={{ background: '#fff', padding: '32px', borderRadius: 24, border: '1px solid #E2E8F0', display: 'flex', gap: 20 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 900, color: '#00ADEF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Share: Mobile Scan</div>
+                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5, margin: 0 }}>Scan with guest's device for instant social dispatch.</p>
                 </div>
-                <p className="text-[10px] text-white/30 italic">Scan with your phone camera to share on X / Social Media.</p>
+                <div style={{ width: 100, height: 100, background: '#fff', padding: 8, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`https://twitter.com/intent/tweet?text=Just finished my interview for 'Voices of Takaful AI' at iorta TechNXT 2026. 🚀 @iorta #VoicesOfTakafulAI #iortaTechNXT`)}&size=100x100&color=003B6E`}
+                    alt="QR"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-4 justify-center">
-               <button onClick={() => setStep('hub')} className="px-10 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold uppercase text-xs tracking-widest border border-white/5">Hub</button>
-               <button onClick={() => { setStep('start'); setGuest({ name: '', title: '', org: '', persona: '', li: '', email: '' }); setSelectedQIds([]); setCurrentQIdx(0); setTimer(180); setAnswers({}); }} className="px-10 py-4 bg-[#C8922A] text-black rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg">New Interview</button>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 40 }}>
+              <button onClick={() => setStep('hub')} style={{ padding: '18px 48px', background: '#F1F5F9', border: 'none', borderRadius: 16, color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}>HUB</button>
+              <button onClick={() => { setStep('start'); setGuest({ name: '', title: '', org: '', persona: '', li: '', email: '' }); setSelectedQIds([]); setCurrentQIdx(0); setTimer(180); setAnswers({}); }} style={{ padding: '18px 48px', background: '#C8922A', border: 'none', borderRadius: 16, color: '#fff', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', boxShadow: '0 10px 20px rgba(200, 146, 42, 0.3)' }}>NEW INTERVIEW</button>
             </div>
           </div>
         )}
