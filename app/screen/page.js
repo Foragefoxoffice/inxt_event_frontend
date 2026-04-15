@@ -10,6 +10,7 @@ export default function ScreenPage() {
   const [winner, setWinner] = useState(null)
   const socketRef = useRef(null)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [liveCount, setLiveCount] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -75,6 +76,10 @@ export default function ScreenPage() {
 
         socket.on('player:joined', () => {
           setStatsData(prev => prev ? { ...prev, totalPlayers: (prev.totalPlayers || 0) + 1 } : prev)
+        })
+
+        socket.on('player:activity', ({ status }) => {
+          setLiveCount(prev => status === 'playing' ? prev + 1 : Math.max(0, prev - 1))
         })
 
         socket.on('crossword:winner', (data) => {
@@ -166,7 +171,8 @@ export default function ScreenPage() {
         <div className="flex items-center gap-12 animate-marquee">
           {[1, 2].map(i => (
             <div key={i} className="flex items-center gap-12">
-              <StatItem label="Active Challengers" value={statsData.totalPlayers} color="text-blue-600" />
+              <StatItem label="Total Challengers" value={statsData.totalPlayers} color="text-blue-600" />
+              <StatItem label="Currently Playing" value={liveCount} color="text-emerald-600 font-bold" />
               <StatItem label="Global Submissions" value={crosswordGame?.totalSubmissions || 0} color="text-slate-600" />
               <StatItem label="AI Consensus" value={`${mythGame?.aiMatchPercent || 0}%`} color="text-emerald-600" />
               <StatItem label="Market Voices" value={interviewGame?.totalSubmissions || 0} color="text-blue-600" />

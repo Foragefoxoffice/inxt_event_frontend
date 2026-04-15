@@ -7,6 +7,7 @@ import { AgencyGame } from '@/components/player/AgencyGame'
 import { MythGame } from '@/components/player/MythGame'
 import { CrosswordGame } from '@/components/player/CrosswordGame'
 import { InterviewerHub } from '@/components/player/InterviewerHub'
+import { getSocket } from '@/lib/socket'
 
 export default function GamePage() {
   const { gameId } = useParams()
@@ -15,6 +16,7 @@ export default function GamePage() {
   const [gameData, setGameData] = useState(null)
   const [eventId, setEventId] = useState(null)
   const [playerId, setPlayerId] = useState(null)
+  const [playerName, setPlayerName] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
@@ -31,8 +33,9 @@ export default function GamePage() {
         try {
           const stored = sessionStorage.getItem(`player_${eventData.eventId}`)
           if (stored) {
-            const { playerId: pid } = JSON.parse(stored)
+            const { playerId: pid, name } = JSON.parse(stored)
             setPlayerId(pid)
+            setPlayerName(name)
             setStep('game')
             return
           }
@@ -47,7 +50,20 @@ export default function GamePage() {
       })
   }, [gameId])
 
+  useEffect(() => {
+    if (step === 'game' && eventId && gameId && playerName) {
+      const socket = getSocket()
+      socket.emit('join:game', { eventId, gameId, playerName })
+
+      return () => {
+        socket.emit('leave:game', { eventId, gameId, playerName })
+        socket.disconnect()
+      }
+    }
+  }, [step, eventId, gameId, playerName])
+
   async function handleSubmit(answers, duration = null) {
+    if (submitting) return
     setSubmitting(true)
     setError(null)
     try {
