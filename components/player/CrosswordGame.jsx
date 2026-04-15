@@ -49,7 +49,6 @@ export function CrosswordGame({ questions, onSubmit, submitting, eventId }) {
 
   const handleCheckAnswers = () => {
     setCheckRequested(true)
-    setTimeout(() => setCheckRequested(false), 3000)
   }
 
   const handleHint = () => {

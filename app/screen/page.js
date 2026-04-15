@@ -145,12 +145,9 @@ export default function ScreenPage() {
       <header className="px-10 py-6 bg-white border-b border-slate-200 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-8">
           <img 
-            src="/logo_shield.png" 
+            src="/logo.png" 
             alt="Logo" 
             className="h-10 w-auto" 
-            style={{ 
-              filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(167deg) brightness(101%) contrast(101%)' 
-            }}
           />
           <div className="h-8 w-px bg-slate-200 hidden md:block" />
           <div>

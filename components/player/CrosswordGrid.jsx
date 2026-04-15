@@ -269,8 +269,10 @@ export default function CrosswordGrid({
                   }
                 }}
                 className={`
-                  w-full h-full text-center text-2xl font-black uppercase text-slate-900 bg-transparent outline-none border-none
-                  ${checkResults && cell.char ? (cell.char === cell.answer ? 'text-green-600 bg-green-50' : 'text-red-500 bg-red-50') : ''}
+                  w-full h-full text-center text-2xl font-black uppercase outline-none border-none transition-all duration-300
+                  ${checkResults && cell.char 
+                    ? (cell.char === cell.answer ? 'text-green-600 bg-green-100/80 shadow-inner' : 'text-red-600 bg-red-100/80 shadow-inner') 
+                    : 'text-slate-900 bg-transparent'}
                 `}
               />
             )}
