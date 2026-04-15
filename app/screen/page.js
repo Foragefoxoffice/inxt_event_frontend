@@ -91,7 +91,18 @@ export default function ScreenPage() {
     }
 
     init()
-    return () => socketRef.current?.disconnect()
+
+    // Fallback: If socket isn't working (e.g. on Vercel), refresh via API every 10s
+    const pollInterval = setInterval(() => {
+      if (!socketRef.current?.connected) {
+        refreshData().catch(() => {})
+      }
+    }, 10000)
+
+    return () => {
+      socketRef.current?.disconnect()
+      clearInterval(pollInterval)
+    }
   }, [])
 
   if (!statsData) {
