@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import styles from '../admin.module.css'
 
-export default function AdminManagePage() {
+function ManageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const targetGameId = searchParams.get('gameId')
@@ -439,3 +439,16 @@ export default function AdminManagePage() {
     </main>
   )
 }
+
+export default function AdminManagePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ManageContent />
+    </Suspense>
+  )
+}
+
